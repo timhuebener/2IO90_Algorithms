@@ -14,7 +14,7 @@ import java.util.Scanner;
  *
  * Created by Noud de Kroon on 11/16/2016.
  */
-
+//testing shizzle
 public class TaxiScanner {
 
     private static TaxiScanner instance = null;

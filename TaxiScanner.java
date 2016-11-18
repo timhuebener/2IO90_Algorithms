@@ -14,11 +14,7 @@ import java.util.Scanner;
  *
  * Created by Noud de Kroon on 11/16/2016.
  */
-//hello
-<<<<<<< HEAD
-//hello2
-//sup dude
-//lol
+//why hello there teammates, i am testing a simple pullrequest branch merge from a new branch i created, called Jelle Schukken
 =======
 
 >>>>>>> origin/master

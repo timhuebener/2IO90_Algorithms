@@ -16,6 +16,7 @@ import java.util.Scanner;
  */
 //hello
 //hello2
+//lol
 public class TaxiScanner {
 
     private static TaxiScanner instance = null;

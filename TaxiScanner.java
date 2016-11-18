@@ -14,11 +14,6 @@ import java.util.Scanner;
  *
  * Created by Noud de Kroon on 11/16/2016.
  */
-//hello
-//hello2
-//sup dude
-//lol
-//testcomment
 
 public class TaxiScanner {
 

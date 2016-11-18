@@ -15,13 +15,10 @@ import java.util.Scanner;
  * Created by Noud de Kroon on 11/16/2016.
  */
 //hello
-<<<<<<< HEAD
 //hello2
 //sup dude
 //lol
-=======
 
->>>>>>> origin/master
 public class TaxiScanner {
 
     private static TaxiScanner instance = null;

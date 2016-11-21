@@ -107,4 +107,8 @@ public class TaxiScanner {
 
         System.out.println(s);
     }
+
+    public static void main(String[] args){
+        System.out.println("1");
+    }
 }

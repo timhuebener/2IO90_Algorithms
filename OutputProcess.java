@@ -46,7 +46,7 @@ public class OutputProcess {
         int stops[][]=new int[destinations][];
         int length;
 
-
+        //s
         for (int i = 0; i < destinations; i++) {
             length = scanner.nextInt();
             for (int j=0; j < length; j++ )

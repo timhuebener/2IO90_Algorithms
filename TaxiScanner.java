@@ -16,6 +16,7 @@ import java.util.Scanner;
  */
 //testing shizzle
 //testing stuff
+    //test by Tim for IntelliJ
 public class TaxiScanner {
 
     private static TaxiScanner instance = null;

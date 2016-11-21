@@ -53,10 +53,10 @@ public class OutputProcess {
         int length;
 
         //s
-        for (int i = 0; i <= destinations; i++) {
+        for (int i = 0; i < destinations; i++) {
             length = scanner.nextInt();
             System.out.println("length is:" + length);
-            for (int j=0; j <= length; j++ ){
+            for (int j=0; j < length; j++ ){
             stops[i][j] = scanner.nextInt();// parse
             System.out.println("stops is:" + stops[i][j]);
             }

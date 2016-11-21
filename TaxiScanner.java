@@ -17,6 +17,8 @@ import java.util.Scanner;
 //testing shizzle
 //testing stuff
     //test by Tim for IntelliJ
+
+
 public class TaxiScanner {
 
     private static TaxiScanner instance = null;
@@ -107,5 +109,12 @@ public class TaxiScanner {
         }
 
         System.out.println(s);
+    }
+
+    public static void main(String[] args){
+        System.out.println("gogo");
+        OutputProcess test = new OutputProcess();
+        test.readingInput();
+        //ss
     }
 }

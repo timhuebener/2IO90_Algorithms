@@ -74,9 +74,13 @@ public class OutputProcess {
 
         for (int i=0; i< timeCalls; i++);
         {
-            calls[counter][0] = scanner.nextInt(); //parse
-            calls[counter][1] = scanner.nextInt();
-            counter ++;
+            int k = scanner.nextInt();
+            System.out.println("k is:" + t);
+            for (int j=0; j<k;j++) {
+                calls[counter][0] = scanner.nextInt(); //parse
+                calls[counter][1] = scanner.nextInt();
+                counter++;
+            }
         }
 
 

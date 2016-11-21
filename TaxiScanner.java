@@ -112,7 +112,7 @@ public class TaxiScanner {
     }
 
     public static void main(String[] args){
-        System.out.print("gogo");
+        System.out.println("gogo");
         OutputProcess test = new OutputProcess();
         test.readingInput();
     }

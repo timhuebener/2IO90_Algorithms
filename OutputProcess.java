@@ -8,24 +8,41 @@ public class OutputProcess {
 
 
     void readingInput() {
-        //int l = scanner.nextLine();
+
 
         Scanner scanner = new Scanner(System.in);
-        String line = scanner.nextLine();
+
+        int l = scanner.nextInt();
+
+        /*String line = scanner.nextLine();
         String[] inValues = line.split(" ");
         int[] values = new int[inValues.length];
+
+        int l = Integer.parseInt(inValues[0]); //number of lines
+        System.out.println("L  is:" + l);
+
+        //line = scanner.nextLine();
+        //inValues = line.split(" ");
+        //int m = Integer.parseInt(inValues[0]);
+
+
+        String line2 = scanner.nextLine();
+
+
 
         for(int i = 0; i < inValues.length; i++){
 
             values[i] = Integer.parseInt(inValues[i]);
             System.out.println(values[i]);
-        }
+        }*/
 
-        /*float alpha = scanner.nextLine();
-        int m = scanner.nextLine();
-        int taxis = scanner.nextLine(); // parse taxis and passengers
-        int passengers = scanner.nextLine();
-        int destinations = scanner.nextLine();
+
+
+        float alpha = scanner.nextFloat();
+        int m = scanner.nextInt();
+        int taxis = scanner.nextInt(); // parse taxis and passengers
+        int passengers = scanner.nextInt();
+        int destinations = scanner.nextInt();
         int stops[][]=new int[destinations][];
         int length;
 
@@ -47,8 +64,14 @@ public class OutputProcess {
             calls[counter][0] = scanner.nextInt(); //parse
             calls[counter][1] = scanner.nextInt();
             counter ++;
-        }*/
+        }
 
 
+    }
+    public static void main(String[] args){
+
+        OutputProcess test = new OutputProcess();
+        test.readingInput();
+        //ss
     }
 }

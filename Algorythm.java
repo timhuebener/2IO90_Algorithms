@@ -39,9 +39,8 @@ public class Algorythm {
             network[i] = new Node(neighbors);
         }
         temp = scanner.nextLine();
-        while(temp.charAt(nb2) != ' ') nb2++;
-        training = Integer.parseInt(temp.substring(0,nb2));
-       totalCalls = Integer.parseInt(temp.substring(nb2+1));
+        training = Integer.parseInt(temp.substring(0,temp.indexOf(" ")));
+        totalCalls = Integer.parseInt(temp.substring(temp.indexOf(" ")+1));
         //set starting points for taxis in this case, all node 0
         for(int i = 0; i < taxis.length;i++){
             taxis[i] = new Taxi(0,capacity);

@@ -14,10 +14,6 @@ import java.util.Scanner;
  *
  * Created by Noud de Kroon on 11/16/2016.
  */
-//testing shizzle
-//testing stuff
-    //test by Tim for IntelliJ
-
 
 public class TaxiScanner {
 
@@ -109,9 +105,5 @@ public class TaxiScanner {
         }
 
         System.out.println(s);
-    }
-
-    public static void main(String[] args){
-
     }
 }

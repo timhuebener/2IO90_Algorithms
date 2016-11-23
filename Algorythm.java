@@ -27,10 +27,7 @@ public class Algorythm {
         while(temp.charAt(nb) != ' ') nb++;
         //substring includes character at index 0 but not at index 1 so this would be the first character in the string
         taxis = new Taxi[Integer.parseInt(temp.substring(0,nb))];
-        temp = temp.substring(nb+1) + ' ';
-        nb = 0;
-        while(temp.charAt(nb) != ' ') nb++;
-        capacity = Integer.parseInt(temp.substring(0,nb));
+        capacity = Integer.parseInt(temp.substring(nb+1));
         network = new Node[Integer.parseInt(scanner.nextLine())];
         for(int i = 0;i < network.length;i++){//creates each node with its correct neighbors
             temp = scanner.nextLine();
@@ -43,10 +40,7 @@ public class Algorythm {
         temp = scanner.nextLine();
         while(temp.charAt(nb2) != ' ') nb2++;
         training = Integer.parseInt(temp.substring(0,nb2));
-        temp =  temp.substring(nb2+1) + ' ';
-        nb2 = 0;
-        while(temp.charAt(nb2) != ' ') nb2++;
-        totalCalls = Integer.parseInt(temp.substring(0,nb2));
+        totalCalls = Integer.parseInt(temp.substring(nb2+1));
         //set starting points for taxis in this case, all node 0
         for(int i = 0; i < taxis.length;i++){
             taxis[i] = new Taxi(0,capacity);

@@ -12,9 +12,6 @@ public class Algorythm {
     int training;
     int totalCalls;
     String line = "";
-    int nb = 0;
-    int nb2 = 0;
-    
     
     public Algorythm(){
         //-----------------------reads input using TaxiScanner class------------------------
@@ -23,10 +20,9 @@ public class Algorythm {
         alpha = Float.parseFloat(scanner.nextLine());
         maxTime = Integer.parseInt(scanner.nextLine());
         String temp = scanner.nextLine();
-        while(temp.charAt(nb) != ' ') nb++;
         //substring includes character at index 0 but not at index 1 so this would be the first character in the string
-        taxis = new Taxi[Integer.parseInt(temp.substring(0,nb))];
-        capacity = Integer.parseInt(temp.substring(nb+1));
+        taxis = new Taxi[Integer.parseInt(temp.substring(0,temp.indexOf(" ")))];
+        capacity = Integer.parseInt(temp.substring(temp.indexOf(" ")+1));
         network = new Node[Integer.parseInt(scanner.nextLine())];
         for(int i = 0;i < network.length;i++){//creates each node with its correct neighbors
             temp = scanner.nextLine()+" ";
@@ -91,7 +87,7 @@ public class Algorythm {
         return (!scanner.hasNextLine() && nodesEmpty() && taxisEmpty());
     }
     
-    //checks is all taxies are empty
+    //checks is all taxis are empty
     private boolean taxisEmpty(){
         for(int i = 0; i < taxis.length; i++){
             if(!taxis[i].empty()){

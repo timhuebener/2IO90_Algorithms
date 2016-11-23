@@ -78,7 +78,6 @@ public class Algorythm {
             }
             scanner.println(line + "c");//end minute
             line = "";
-            
          
             
             
@@ -86,7 +85,7 @@ public class Algorythm {
     }
     
     private boolean done(){//done when no more lines in input, no more passengers in nodes or taxies
-        return !scanner.hasNextLine() && nodesEmpty() && taxisEmpty();
+        return (!scanner.hasNextLine() && nodesEmpty() && taxisEmpty());
     }
     
     //checks is all taxies are empty

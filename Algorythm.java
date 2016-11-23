@@ -52,7 +52,8 @@ public class Algorythm {
         //main loop, every loop represents a minute
         while(!done()){
             
-            if(scanner.hasNextLine()){//add passengers to nodes
+            if(totalCalls>0){//add passengers to nodes
+            	totalCalls--;
                 temp = scanner.nextLine()+" ";
                 temp = temp.substring(temp.indexOf(" ")+1);
                 while(temp.length()>0){//skip # of new people since can be derived from temp.length and 4 at a time due to 2 numbers and 2 spaces
@@ -79,13 +80,10 @@ public class Algorythm {
                     int m = network[taxis[i].getNode()].randomNeighbor();
                     taxis[i].moveTo(m);
                     line = line + "m " + i + " " + m + " ";
-                }
+                }   
             }
             scanner.println(line + "c");//end minute
             line = "";
-         
-            
-            
         }
     }
     

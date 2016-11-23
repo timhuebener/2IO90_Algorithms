@@ -5,7 +5,7 @@ public class Algorythm {
 	//all those variables in the beggining
 	TaxiScanner scanner;
 	int linesLeft;
-	int alpha;
+	float alpha;
 	int maxTime;
 	Taxi[] taxis;//array containing all taxis
 	int capacity;
@@ -14,10 +14,10 @@ public class Algorythm {
 	int totalCalls;
 	
 	public Algorythm(){
-		//-----------------------reads input using taxiScanner class------------------------
+		//-----------------------reads input using TaxiScanner class------------------------
 		scanner = TaxiScanner.getInstance();
 		linesLeft = Integer.parseInt(scanner.nextLine());
-		alpha = Integer.parseInt(scanner.nextLine());
+		alpha = Float.parseFloat(scanner.nextLine());
 		maxTime = Integer.parseInt(scanner.nextLine());
 		String temp = scanner.nextLine();
 		//substring includes character at index 0 but not at index 1 so this would be the first character in the string
@@ -40,6 +40,7 @@ public class Algorythm {
 			taxis[i] = new Taxi(0,capacity);
 			System.out.println("m " + i + " " + 0 + " ");
 		}
+        System.out.println("c");
 		//------------------------------------------------------------------------------
 		//main loop, every loop represents a minute
 		while(!done()){
@@ -72,7 +73,7 @@ public class Algorythm {
 		}
 	}
 	
-	private boolean done(){//done when no morel lines in input, no more passengers in nodes or taxies
+	private boolean done(){//done when no more lines in input, no more passengers in nodes or taxies
 		return !scanner.hasNextLine() && nodesEmpty() && taxisEmpty();
 	}
 	

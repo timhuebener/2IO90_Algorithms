@@ -29,17 +29,18 @@ public class Algorythm {
         capacity = Integer.parseInt(temp.substring(nb+1));
         network = new Node[Integer.parseInt(scanner.nextLine())];
         for(int i = 0;i < network.length;i++){//creates each node with its correct neighbors
-            temp = scanner.nextLine();
-            int[] neighbors = new int[Integer.parseInt(temp.substring(0,1))];
-            for(int j = 2; j < temp.length()-2; j+=2){//+= 2 to skip the next space
-                neighbors[j/2 - 1] = Integer.parseInt(temp.substring(j,j+1));
+            temp = scanner.nextLine()+" ";
+            int[] neighbors = new int[Integer.parseInt(temp.substring(0,temp.indexOf(" ")))];
+            temp = temp.substring(temp.indexOf(" ")+1);
+            for (int j = 0;temp.length()>0;j++){
+                neighbors[j] = Integer.parseInt(temp.substring(0,temp.indexOf(" ")));
+                temp = temp.substring(temp.indexOf(" ")+1);
             }
             network[i] = new Node(neighbors);
         }
         temp = scanner.nextLine();
-        while(temp.charAt(nb2) != ' ') nb2++;
-        training = Integer.parseInt(temp.substring(0,nb2));
-       totalCalls = Integer.parseInt(temp.substring(nb2+1));
+        training = Integer.parseInt(temp.substring(0,temp.indexOf(" ")));
+        totalCalls = Integer.parseInt(temp.substring(temp.indexOf(" ")+1));
         //set starting points for taxis in this case, all node 0
         for(int i = 0; i < taxis.length;i++){
             taxis[i] = new Taxi(0,capacity);
@@ -52,10 +53,15 @@ public class Algorythm {
         while(!done()){
             
             if(scanner.hasNextLine()){//add passengers to nodes
-                temp = scanner.nextLine();
-                for(int i = 2; i < temp.length()-2; i+=4){//skip # of new people since can be derived from temp.length and 4 at a time due to 2 numbers and 2 spaces
+                temp = scanner.nextLine()+" ";
+                temp = temp.substring(temp.indexOf(" ")+1);
+                while(temp.length()>0){//skip # of new people since can be derived from temp.length and 4 at a time due to 2 numbers and 2 spaces
                     //this is a rough one, add a passenger to the node equal to the fist number with a destination equal to the second number
-                    network[Integer.parseInt(temp.substring(i,i+1))].addPassenger(new Passenger(Integer.parseInt(temp.substring(i+2,i+3))));
+                	int node = Integer.parseInt(temp.substring(0,temp.indexOf(" ")));
+                	temp = temp.substring(temp.indexOf(" ")+1);
+                	int dest = Integer.parseInt(temp.substring(0,temp.indexOf(" ")));
+                    network[node].addPassenger(new Passenger(dest));
+                    temp = temp.substring(temp.indexOf(" ")+1);
                 }
             }
             //dumb algorythms behavior
@@ -77,7 +83,6 @@ public class Algorythm {
             }
             scanner.println(line + "c");//end minute
             line = "";
-            
          
             
             
@@ -85,7 +90,7 @@ public class Algorythm {
     }
     
     private boolean done(){//done when no more lines in input, no more passengers in nodes or taxies
-        return !scanner.hasNextLine() && nodesEmpty() && taxisEmpty();
+        return (!scanner.hasNextLine() && nodesEmpty() && taxisEmpty());
     }
     
     //checks is all taxies are empty

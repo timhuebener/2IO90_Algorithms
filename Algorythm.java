@@ -53,10 +53,15 @@ public class Algorythm {
         while(!done()){
             
             if(scanner.hasNextLine()){//add passengers to nodes
-                temp = scanner.nextLine();
-                for(int i = 2; i < temp.length()-2; i+=4){//skip # of new people since can be derived from temp.length and 4 at a time due to 2 numbers and 2 spaces
+                temp = scanner.nextLine()+" ";
+                temp = temp.substring(temp.indexOf(" ")+1);
+                while(temp.length()>0){//skip # of new people since can be derived from temp.length and 4 at a time due to 2 numbers and 2 spaces
                     //this is a rough one, add a passenger to the node equal to the fist number with a destination equal to the second number
-                    network[Integer.parseInt(temp.substring(i,i+1))].addPassenger(new Passenger(Integer.parseInt(temp.substring(i+2,i+3))));
+                	int node = Integer.parseInt(temp.substring(0,temp.indexOf(" ")));
+                	temp = temp.substring(temp.indexOf(" ")+1);
+                	int dest = Integer.parseInt(temp.substring(0,temp.indexOf(" ")));
+                    network[node].addPassenger(new Passenger(dest));
+                    temp = temp.substring(temp.indexOf(" ")+1);
                 }
             }
             //dumb algorythms behavior

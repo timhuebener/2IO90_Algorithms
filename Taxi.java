@@ -51,9 +51,9 @@ public class Taxi {
 	
 	public boolean empty(){
 		if(occupants.size() == 0){
-			return false;
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 }

@@ -1,3 +1,7 @@
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -14,6 +18,10 @@ import java.util.Scanner;
  *
  * Created by Noud de Kroon on 11/16/2016.
  */
+//testing shizzle
+//testing stuff
+    //test by Tim for IntelliJ
+
 
 public class TaxiScanner {
 
@@ -29,6 +37,13 @@ public class TaxiScanner {
      */
     private TaxiScanner(){
         state = State.INITIAL;
+        File input = new File("D:\\Users\\Jelle Schukken\\Desktop\\Input.txt");
+        try {
+			System.setIn(new FileInputStream(input));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         scanner = new Scanner(System.in);
     }
 
@@ -96,14 +111,21 @@ public class TaxiScanner {
      * @throws IllegalStateException if called when readLine is expected by the ordering.
      */
     public void println(String s){
+
         if (state != State.AWAITINGPRINT) {
             throw new IllegalStateException("Print called while not in AWAITINGPRINT state");
         }
 
-        if (s.charAt(s.length() - 1) == 'c' && hasNextLine()) {
+        if (s.charAt(s.length()-1) == 'c' && hasNextLine()) {
+        	System.out.println("test2");
             state = State.AWAITINGNEXTLINE;
+           
+            
         }
-
         System.out.println(s);
+    }
+
+    public static void main(String[] args){
+
     }
 }

@@ -29,10 +29,12 @@ public class Algorythm {
         capacity = Integer.parseInt(temp.substring(nb+1));
         network = new Node[Integer.parseInt(scanner.nextLine())];
         for(int i = 0;i < network.length;i++){//creates each node with its correct neighbors
-            temp = scanner.nextLine();
-            int[] neighbors = new int[Integer.parseInt(temp.substring(0,1))];
-            for(int j = 2; j < temp.length()-2; j+=2){//+= 2 to skip the next space
-                neighbors[j/2 - 1] = Integer.parseInt(temp.substring(j,j+1));
+            temp = scanner.nextLine()+" ";
+            int[] neighbors = new int[Integer.parseInt(temp.substring(0,temp.indexOf(" ")))];
+            temp = temp.substring(temp.indexOf(" ")+1);
+            for (int j = 0;temp.length()>0;j++){
+                neighbors[j] = Integer.parseInt(temp.substring(0,temp.indexOf(" ")));
+                temp = temp.substring(temp.indexOf(" ")+1);
             }
             network[i] = new Node(neighbors);
         }

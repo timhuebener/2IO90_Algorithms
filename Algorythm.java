@@ -46,9 +46,18 @@ public class Algorythm {
             line = line +"m " + i + " " + 0 + " ";
         }
         scanner.println(line + "c");
+        line = "";
         //------------------------------------------------------------------------------
         //main loop, every loop represents a minute
         while(!done()){
+            
+            if(scanner.hasNextLine()){//add passengers to nodes
+                temp = scanner.nextLine();
+                for(int i = 2; i < temp.length()-2; i+=4){//skip # of new people since can be derived from temp.length and 4 at a time due to 2 numbers and 2 spaces
+                    //this is a rough one, add a passenger to the node equal to the fist number with a destination equal to the second number
+                    network[Integer.parseInt(temp.substring(i,i+1))].addPassenger(new Passenger(Integer.parseInt(temp.substring(i+2,i+3))));
+                }
+            }
             //dumb algorythms behavior
             //check if it can drop someone at their destination
             //else check if it can pick someone up
@@ -69,13 +78,7 @@ public class Algorythm {
             scanner.println(line + "c");//end minute
             line = "";
             
-            if(scanner.hasNextLine()){//add passengers to nodes
-                temp = scanner.nextLine();
-                for(int i = 2; i < temp.length()-2; i+=4){//skip # of new people since can be derived from temp.length and 4 at a time due to 2 numbers and 2 spaces
-                    //this is a rough one, add a passenger to the node equal to the fist number with a destination equal to the second number
-                    network[Integer.parseInt(temp.substring(i,i+1))].addPassenger(new Passenger(Integer.parseInt(temp.substring(i+2,i+3))));
-                }
-            }
+         
             
             
         }

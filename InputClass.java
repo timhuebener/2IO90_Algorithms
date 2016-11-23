@@ -9,10 +9,10 @@ public class InputClass {
     private int line5;
     private int minutes;
     Random rn = new Random();
-    
+
     //number of following lines
     private int lineOne(){
-        line5 = rn.nextInt(98)+2;
+        line5 = rn.nextInt(8)+2;
         return 5 + line5;
     }
 
@@ -20,21 +20,21 @@ public class InputClass {
     private float lineTwo(){
         return (float) Math.random();
     }
-    
+
     //max time that may pass between ordering a taxi and dropping off
     private int lineThree(){
         return line5 * 2;
     }
-    
+
     //number of taxis available and capacity per taxi respectively
     private String lineFour(){
         return rn.nextInt(line5) + " " + rn.nextInt(15);}
-    
+
     //number of nodes in graph
     private int lineFive(){
         return line5;
     }
-    
+
     //connections of node 0
     private String lineSix(){
         String temp = "" + (line5-1);
@@ -54,16 +54,16 @@ public class InputClass {
     //Training time and length of caller list
     private String lineSeven(){
         int temp = rn.nextInt(10);
-        minutes =  rn.nextInt(100)+temp;
-        
-        
+        minutes =  rn.nextInt(10)+temp;
+
+
         return temp + " "+ minutes;
     }
-    
-    
+
+
     private void lineSevenPlus(){
         for(int i = 0; i < minutes; i++){
-            int temp = rn.nextInt(40);
+            int temp = rn.nextInt(6);
             System.out.print(temp+" ");
             for(int j = 0; j < temp; j++){
                 int start = rn.nextInt(line5);
@@ -77,10 +77,8 @@ public class InputClass {
             System.out.println();
         }
     }
-    
-    
-    public static void main(String[] args){
-        
+
+    public void createInput(){
         InputClass temp = new InputClass();
         //System.out.println("Number of lines");
         System.out.println(temp.lineOne());
@@ -100,5 +98,9 @@ public class InputClass {
         System.out.println(temp.lineSeven());
         //System.out.println("Input");
         temp.lineSevenPlus();
+    }
+
+    public static void main(String[] args){
+        new InputClass().createInput();
     }
 }

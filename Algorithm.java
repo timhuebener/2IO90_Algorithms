@@ -1,7 +1,7 @@
 //main algorythm class for dumbAlgorythm
 public class Algorithm {
     
-    //all those variables in the beggining
+    //all those variables in the beginning
     TaxiScanner scanner;
     int linesLeft;
     float alpha;
@@ -83,7 +83,7 @@ public class Algorithm {
         }
     }
     
-    private boolean done(){//done when no more lines in input, no more passengers in nodes or taxies
+    private boolean done(){//done when no more lines in input, no more passengers in nodes or taxis
         return (!scanner.hasNextLine() && nodesEmpty() && taxisEmpty());
     }
     

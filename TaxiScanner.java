@@ -37,7 +37,7 @@ public class TaxiScanner {
      */
     private TaxiScanner(){
         state = State.INITIAL;
-        File input = new File("D:\\Users\\Jelle Schukken\\Desktop\\Input.txt");
+        File input = new File("C:\\Users\\s152139\\Desktop\\AlgoInput.txt");
         try {
 			System.setIn(new FileInputStream(input));
 		} catch (FileNotFoundException e) {
@@ -117,7 +117,6 @@ public class TaxiScanner {
         }
 
         if (s.charAt(s.length()-1) == 'c' && hasNextLine()) {
-        	System.out.println("test2");
             state = State.AWAITINGNEXTLINE;
            
             

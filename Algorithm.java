@@ -1,5 +1,5 @@
 //main algorythm class for dumbAlgorythm
-public class Algorythm {
+public class Algorithm {
     
     //all those variables in the beggining
     TaxiScanner scanner;
@@ -13,7 +13,7 @@ public class Algorythm {
     int totalCalls;
     String line = "";
     
-    public Algorythm(){
+    public Algorithm(){
         //-----------------------reads input using TaxiScanner class------------------------
         scanner = TaxiScanner.getInstance();
         linesLeft = Integer.parseInt(scanner.nextLine());

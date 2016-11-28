@@ -34,6 +34,10 @@ public class Algorithm {
             }
             network[i] = new Node(neighbors);
         }
+        //run floyd warshall
+        //for each i = 0, i< network.length
+        //      for each j = 0, 
+        
         temp = scanner.nextLine();
         training = Integer.parseInt(temp.substring(0,temp.indexOf(" ")));
         totalCalls = Integer.parseInt(temp.substring(temp.indexOf(" ")+1));

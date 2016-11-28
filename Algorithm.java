@@ -26,18 +26,24 @@ public class Algorithm {
         network = new Node[Integer.parseInt(scanner.nextLine())];
         for(int i = 0;i < network.length;i++){//creates each node with its correct neighbors
             temp = scanner.nextLine()+" ";
+            int[] dist = new int[network.length];
+            for(int k = 0; k < dist.length;k++){
+            	dist[k] = Integer.MAX_VALUE;
+            }
+            dist[i] = 0;
             int[] neighbors = new int[Integer.parseInt(temp.substring(0,temp.indexOf(" ")))];
             temp = temp.substring(temp.indexOf(" ")+1);
             for (int j = 0;temp.length()>0;j++){
-                neighbors[j] = Integer.parseInt(temp.substring(0,temp.indexOf(" ")));
+            	int node = Integer.parseInt(temp.substring(0,temp.indexOf(" ")));//----------
+            	int neighbor = node;
+            	dist[node]=1;
+                neighbors[j] = neighbor;
+                
                 temp = temp.substring(temp.indexOf(" ")+1);
             }
-            network[i] = new Node(neighbors);
+            network[i] = new Node(neighbors,dist);
         }
-        //run floyd warshall
-        //for each i = 0, i< network.length
-        //      for each j = 0, 
-        
+        floydWarshall();
         temp = scanner.nextLine();
         training = Integer.parseInt(temp.substring(0,temp.indexOf(" ")));
         totalCalls = Integer.parseInt(temp.substring(temp.indexOf(" ")+1));
@@ -65,7 +71,7 @@ public class Algorithm {
                     temp = temp.substring(temp.indexOf(" ")+1);
                 }
             }
-            //dumb algorythms behavior
+            //dumb algorithms behavior
             //check if it can drop someone at their destination
             //else check if it can pick someone up
             //else move randomly
@@ -87,7 +93,7 @@ public class Algorithm {
         }
     }
     
-    private boolean done(){//done when no more lines in input, no more passengers in nodes or taxis
+    private boolean done(){//done when no more lines in input, no more passengers in nodes or taxies
         return (!scanner.hasNextLine() && nodesEmpty() && taxisEmpty());
     }
     
@@ -109,6 +115,37 @@ public class Algorithm {
             }
         }
         return true;
+    }
+    
+    private void floydWarshall(){
+    	   /* dist[][] will be the output matrix that will finally have the shortest 
+        distances between every pair of vertices */
+   
+      /* Iialize the solution matrix same as input graph matrix. Or 
+         we can say the initial values of shortest distances are based
+         on shortest paths considering no intermediate vertex. */
+      /* Add all vertices one by one to the set of intermediate vertices.
+        ---> Before start of a iteration, we have shortest distances between all
+        pairs of vertices such that the shortest distances consider only the
+        vertices in set {0, 1, 2, .. k-1} as intermediate vertices.
+        ----> After the end of a iteration, vertex no. k is added to the set of
+        intermediate vertices and the set becomes {0, 1, 2, .. k} */
+      for (int k = 0; k < network.length; k++)
+      {
+          // Pick all vertices as source one by one
+          for (int i = 0; i < network.length; i++)
+          {
+              // Pick all vertices as destination for the
+              // above picked source
+              for (int j = 0; j < network.length; j++)
+              {
+                  // If vertex k is on the shortest path from
+                  // i to j, then update the value of dist[i][j]
+                  if (network[i].getDist(k) + network[k].getDist(j) < network[i].getDist(j))
+                	  network[i].setDist( network[i].getDist(k) + network[k].getDist(j),j);
+              }
+          }
+      }
     }
     
 }

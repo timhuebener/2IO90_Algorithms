@@ -301,7 +301,7 @@ public class InputClass {
 			}
 			}
 		}
-		for(int i=0;i<endday+1;i++){
+		for(int i=0;i<endday;i++){
 			System.out.println(realtime[i]+realorders[i]);
 		}
 	}
@@ -348,8 +348,4 @@ public class InputClass {
 		String result = " "+ rn.nextInt(amclusters-1) +" "+ rn.nextInt(amclusters-1);
 		return result;
 	}
-
-
-
-
 }

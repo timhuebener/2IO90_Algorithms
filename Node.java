@@ -4,7 +4,7 @@ import java.util.ArrayList;
 public class Node {
 	private int[] neighbors, dist;
 	private int index;
-	private ArrayList<Passenger> passengers;
+	public ArrayList<Passenger> passengers;
 	
 	public Node(int[] neighbors, int[] dist){
 		this.neighbors = neighbors;

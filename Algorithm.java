@@ -52,7 +52,8 @@ public class Algorithm {
 		temp = scanner.nextLine();
 		training = Integer.parseInt(temp.substring(0, temp.indexOf(" ")));
 		totalCalls = Integer.parseInt(temp.substring(temp.indexOf(" ") + 1));
-		// set starting points for taxis in this case, all node 0
+
+        // set starting points for taxis in this case, all node 0
 		for (int i = 0; i < taxis.length; i++) {
 			taxis[i] = new Taxi(0, capacity);
 			line = line + "m " + i + " " + 0 + " ";
@@ -82,21 +83,39 @@ public class Algorithm {
 					int dest = Integer.parseInt(temp.substring(0,
 							temp.indexOf(" ")));
 					network[node].addPassenger(new Passenger(dest, node/*node = current position(not sure)*/));
+                    //finding the best taxi for last passenger in while loop that called
+                    findClosestTaxi(network[node].passengers.get(network[node].passengers.size()-1));
 					temp = temp.substring(temp.indexOf(" ") + 1);
 				}
 			}
 
 			for (int i =0; i< taxis.length; i++){
+                if(taxis[i].Path.size()!=0) System.out.println((taxis[i].Path.get(0)));
 				if (taxis[i].Path.size()!=0){
-
-				}
+                    for(int j=0; j<network[taxis[i].location()].passengers.size()-3; j++) { //added "-3"
+                        if (network[taxis[i].location()].passengers.get(j).getPickUpTaxi()==i) {
+                            network[taxis[i].location()].passengers.remove(j);
+                            taxis[i].pickUp(network[taxis[i].location()].passengers.get(j));
+                            line = line + "p " + i + " " + network[taxis[i].location()].passengers.get(j).getDestination() + " ";
+                            j--;
+                        }
+                        if(taxis[i].drop()){
+                            line = line + "d " + i + " " + taxis[i].getNode() + " ";
+                        }
+                    }
+				}else{
+                    if(taxis[i].Path.size()!=0){
+                        taxis[i].moveTo(taxis[i].Path.get(0));
+                        line = line + "m " + i + " " + taxis[i].Path.get(0) + " ";
+                        taxis[i].Path.remove(0);
+                    }
+                }
 			}
-
 			// dumb algorithms behavior
 			// check if it can drop someone at their destination
 			// else check if it can pick someone up
 			// else move randomly
-			for (int i = 0; i < taxis.length; i++) {
+			/*for (int i = 0; i < taxis.length; i++) {
 				if (taxis[i].drop()) {
 					line = line + "d " + i + " " + taxis[i].getNode() + " ";
 				} else if (!taxis[i].full()
@@ -109,9 +128,9 @@ public class Algorithm {
 					taxis[i].moveTo(m);
 					line = line + "m " + i + " " + m + " ";
 				}
-			}
+			}*/
 			scanner.println(line + "c");// end minute
-			line = "";
+            line = "";
 		}
 	}
 

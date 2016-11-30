@@ -5,10 +5,9 @@ public class Passenger {
 	private int position;
 	private int pickUpTaxi;
 
-	public Passenger(int dest, int pos, int taxi){
+	public Passenger(int dest, int pos){
 		destination = dest;
 		position = pos;
-		pickUpTaxi = taxi;
 	}
 	
 	public int getDestination(){

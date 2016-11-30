@@ -85,6 +85,13 @@ public class Algorithm {
 					temp = temp.substring(temp.indexOf(" ") + 1);
 				}
 			}
+
+			for (int i =0; i< taxis.length; i++){
+				if (taxis[i].Path.size()!=0){
+
+				}
+			}
+
 			// dumb algorithms behavior
 			// check if it can drop someone at their destination
 			// else check if it can pick someone up
@@ -199,34 +206,34 @@ public class Algorithm {
         int pickup=0, dropoff=0, pickIndex=0, costs=0, bestTaxi=0;
 
         for(int i=0; i<taxis.length; i++){
-            for(int j=0; j<taxis[i].Path.size(); j++){
-                if (j == 0) {
-                    pickup = network[caller.getPosition()].getDist(taxis[i].Path.get(j));
-                    pickIndex=j;
-                }
-                else if(pickup > network[caller.getPosition()].getDist(taxis[i].Path.get(j))){
-                    pickup = network[caller.getPosition()].getDist(taxis[i].Path.get(j));
-                    pickIndex=j;
-                }
-            }
+			if (taxis[i].full()) {
+				for (int j = 0; j < taxis[i].Path.size(); j++) {
+					if (j == 0) {
+						pickup = network[caller.getPosition()].getDist(taxis[i].Path.get(j));
+						pickIndex = j;
+					} else if (pickup > network[caller.getPosition()].getDist(taxis[i].Path.get(j))) {
+						pickup = network[caller.getPosition()].getDist(taxis[i].Path.get(j));
+						pickIndex = j;
+					}
+				}
 
-            for(int j=pickIndex; j<taxis[i].Path.size(); j++){
-                if (j == pickIndex) {
-                    dropoff = network[caller.getDestination()].getDist(taxis[i].Path.get(j));
-                }
-                else if(dropoff > network[caller.getDestination()].getDist(taxis[i].Path.get(j))){
-                    dropoff = network[caller.getDestination()].getDist(taxis[i].Path.get(j));
-                }
-            }
+				for (int j = pickIndex; j < taxis[i].Path.size(); j++) {
+					if (j == pickIndex) {
+						dropoff = network[caller.getDestination()].getDist(taxis[i].Path.get(j));
+					} else if (dropoff > network[caller.getDestination()].getDist(taxis[i].Path.get(j))) {
+						dropoff = network[caller.getDestination()].getDist(taxis[i].Path.get(j));
+					}
+				}
 
-            if(i == 0){
-                costs = pickup + dropoff;
-                bestTaxi = i;
-            }
-            else if(costs > pickup+dropoff){
-                costs = pickup + dropoff;
-                bestTaxi = i;
-            }
+
+				if (i == 0) {
+					costs = pickup + dropoff;
+					bestTaxi = i;
+				} else if (costs > pickup + dropoff) {
+					costs = pickup + dropoff;
+					bestTaxi = i;
+				}
+			}
         }
         //found best taxi
         for(int j=0; j<taxis[bestTaxi].Path.size(); j++){
@@ -253,5 +260,6 @@ public class Algorithm {
             }
         }
         taxis[bestTaxi].Path.add(dropIndex, caller.getPosition());
+		caller.choosePickUpTaxi(bestTaxi);
     }
 }

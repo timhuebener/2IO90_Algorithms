@@ -3,6 +3,7 @@ import java.util.ArrayList;
 //keeps track of adjacent nodes and passengers in this node
 public class Node {
 	private int[] neighbors, dist;
+	private int index;
 	private ArrayList<Passenger> passengers;
 	
 	public Node(int[] neighbors, int[] dist){

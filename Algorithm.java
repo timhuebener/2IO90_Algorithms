@@ -90,20 +90,23 @@ public class Algorithm {
 			}
 
 			for (int i =0; i< taxis.length; i++){
-                if(taxis[i].Path.size()!=0) System.out.println((taxis[i].Path.get(0)));
+                //System.out.println("test");
 				if (taxis[i].Path.size()!=0){
-                    for(int j=0; j<network[taxis[i].location()].passengers.size()-3; j++) { //added "-3"
+                    for(int j=0; j<network[taxis[i].location()].passengers.size(); j++) {
                         if (network[taxis[i].location()].passengers.get(j).getPickUpTaxi()==i) {
-                            network[taxis[i].location()].passengers.remove(j);
+                            System.out.println("test2");
                             taxis[i].pickUp(network[taxis[i].location()].passengers.get(j));
                             line = line + "p " + i + " " + network[taxis[i].location()].passengers.get(j).getDestination() + " ";
+                            network[taxis[i].location()].passengers.remove(j);
                             j--;
                         }
                         if(taxis[i].drop()){
                             line = line + "d " + i + " " + taxis[i].getNode() + " ";
                         }
+
                     }
 				}else{
+                    //TO BE ADDED ACTUALLY MOVING THE TAXIS USING FINDPATH()
                     if(taxis[i].Path.size()!=0){
                         taxis[i].moveTo(taxis[i].Path.get(0));
                         line = line + "m " + i + " " + taxis[i].Path.get(0) + " ";
@@ -129,6 +132,7 @@ public class Algorithm {
 					line = line + "m " + i + " " + m + " ";
 				}
 			}*/
+			System.out.println();
 			scanner.println(line + "c");// end minute
             line = "";
 		}

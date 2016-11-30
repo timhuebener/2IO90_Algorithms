@@ -59,8 +59,10 @@ public class Algorithm {
 		}
 		scanner.println(line + "c");
 		line = "";
+
+
 		// ------------------------------------------------------------------------------
-		// main loop, every loop represents a minute
+		// Main loop that moves the Taxis in the graph minute by minute
 		while (!done()) {
 
 			if (totalCalls > 0) {// add passengers to nodes
@@ -131,6 +133,7 @@ public class Algorithm {
 		return true;
 	}
 
+    // ------------------------------------------------------------------------------
 	private void floydWarshall() {
 		/*
 		 * dist[][] will be the output matrix that will finally have the

@@ -5,6 +5,7 @@ public class Taxi {
 	private int node;
 	private int capacity;
 	private ArrayList<Passenger> occupants;
+	public ArrayList<Integer> Path = new ArrayList<>();
 	
 	public Taxi(int startingNode, int capacity){
 		node = startingNode;
@@ -55,5 +56,11 @@ public class Taxi {
 		}
 		return false;
 	}
+	public void addPath(int i){Path.add(i);}
 
+    public void printPath(){
+        for(int i = 0; i < Path.size(); i++) {
+            System.out.print(Path.get(i));
+        }
+    }
 }

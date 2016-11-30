@@ -167,7 +167,7 @@ public class Algorithm {
 			}
 		}
 	}
-	
+
 	private void printFloyd(){
 		for(int i = 0; i < network.length;i++)
 		{
@@ -179,4 +179,72 @@ public class Algorithm {
 		}
 	}
 
+	//path finding method
+    //has to be adapted
+    void findPath(int taxi, int start, int end){
+        for(int i=0; i<network.length; i++){
+            if(network[i].getDist(start)==1 && (network[end].getDist(start)-1 == network[i].getDist(end))){
+                taxis[taxi].addPath(i);
+                System.out.println(i);
+                findPath(taxi, i, end);
+            }
+        }
+    }
+
+    //find from all taxis the one that can implement new caller into its path with the least cost
+    void findClosestTaxi(int caller){
+        int pickup=0, dropoff=0, k=0, costs=0, bestTaxi=0;
+
+        for(int i=0; i<taxis.length; i++){
+            for(int j=0; j<taxis[i].Path.size(); j++){
+                if (j == 0) {
+                    pickup = network[caller].getDist(taxis[i].Path.get(j));
+                    k=j;
+                }
+                else if(pickup > network[caller].getDist(taxis[i].Path.get(j))){
+                    pickup = network[caller].getDist(taxis[i].Path.get(j));
+                    k=j;
+                }
+            }
+
+            for(int j=k; j<taxis[i].Path.size(); j++){
+                if (j == k) {
+                    dropoff = network[caller].getDist(taxis[i].Path.get(j));
+                }
+                else if(dropoff > network[caller].getDist(taxis[i].Path.get(j))){
+                    dropoff = network[caller].getDist(taxis[i].Path.get(j));
+                }
+            }
+
+            if(i == 0){
+                costs = pickup + dropoff;
+                bestTaxi = i;
+            }
+            else if(costs > pickup+dropoff){
+                costs = pickup + dropoff;
+                bestTaxi = i;
+            }
+        }
+        //found best taxi
+        for(int j=0; j<taxis[bestTaxi].Path.size(); j++){
+            if (j == 0) {
+                pickup = network[caller].getDist(taxis[bestTaxi].Path.get(j));
+                k=j;
+            }
+            else if(pickup > network[caller].getDist(taxis[bestTaxi].Path.get(j))){
+                pickup = network[caller].getDist(taxis[bestTaxi].Path.get(j));
+                k=j;
+            }
+        }
+        taxis[bestTaxi].addPath(k);
+
+        for(int j=k; j<taxis[bestTaxi].Path.size(); j++){
+            if (j == k) {
+                dropoff = network[caller].getDist(taxis[bestTaxi].Path.get(j));
+            }
+            else if(dropoff > network[caller].getDist(taxis[bestTaxi].Path.get(j))){
+                dropoff = network[caller].getDist(taxis[bestTaxi].Path.get(j));
+            }
+        }
+    }
 }

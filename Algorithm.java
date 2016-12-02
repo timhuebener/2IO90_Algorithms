@@ -64,6 +64,7 @@ public class Algorithm {
 
 		// ------------------------------------------------------------------------------
 		// Main loop that moves the Taxis in the graph minute by minute
+		boolean dpcheck=false;
 		while (!done()) {
 
 			if (totalCalls > 0) {// add passengers to nodes
@@ -90,32 +91,42 @@ public class Algorithm {
 			}
 
 			//determine for each taxi what to do (pickup, drop, move)
+
+			//update finding path method
 			for (int i =0; i< taxis.length; i++){
+				dpcheck = false;
                 //System.out.println("test");
 				if (taxis[i].Path.size()!=0){
                     for(int j=0; j<network[taxis[i].location()].passengers.size(); j++) {
                         //check if can pickup
                         if (network[taxis[i].location()].passengers.get(j).getPickUpTaxi()==i) {
-                            System.out.println("test2");
+                            //System.out.println("test2");
+							if(dpcheck == false){
+								taxis[i].Path.remove(0);
+							}
+							dpcheck = true;
                             taxis[i].pickUp(network[taxis[i].location()].passengers.get(j));
                             line = line + "p " + i + " " + network[taxis[i].location()].passengers.get(j).getDestination() + " ";
                             network[taxis[i].location()].passengers.remove(j);
                             j--;
                         }
-                        //check if can drop
-                        if(taxis[i].drop()){
-                            line = line + "d " + i + " " + taxis[i].getNode() + " ";
-                        }
                     }
+					//check if can drop
+					if(taxis[i].drop()){
+						if(dpcheck == false){
+							taxis[i].Path.remove(0);
+						}
+						dpcheck = true;
+						line = line + "d " + i + " " + taxis[i].getNode() + " ";
+					}
                     //otherwise move
-				}else{
-                    //TO BE ADDED ACTUALLY MOVING THE TAXIS USING FINDPATH()
-                    if(taxis[i].Path.size()!=0){
-                        taxis[i].moveTo(taxis[i].Path.get(0));
-                        line = line + "m " + i + " " + taxis[i].Path.get(0) + " ";
-                        taxis[i].Path.remove(0);
-                    }
-                }
+					if(dpcheck == false){
+						taxis[i].moveTo(findPath(taxis[i].location(), taxis[i].Path.get(0)));
+						line = line + "m " + i + " " + findPath(taxis[i].location(), taxis[i].Path.get(0)) + " ";
+						taxis[i].Path.remove(0);
+					}
+				}
+
 			}
 			// dumb algorithms behavior
 			// check if it can drop someone at their destination
@@ -217,14 +228,15 @@ public class Algorithm {
 
 	//path finding method
     //has to be adapted
-    void findPath(int taxi, int start, int end){
+    int findPath(int start, int end){
         for(int i=0; i<network.length; i++){
             if(network[i].getDist(start)==1 && (network[end].getDist(start)-1 == network[i].getDist(end))){
-                taxis[taxi].addPath(i);
-                System.out.println(i);
-                findPath(taxi, i, end);
+                //System.out.println(i);
+				return i;
             }
         }
+        System.out.println("ERROR: No next Node found");
+        return 0;
     }
 
     //find from all taxis the one that can implement new caller into its path with the least cost

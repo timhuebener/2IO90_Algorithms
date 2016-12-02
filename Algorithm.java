@@ -121,8 +121,9 @@ public class Algorithm {
 					}
                     //otherwise move
 					if(dpcheck == false){
-						taxis[i].moveTo(findPath(taxis[i].location(), taxis[i].Path.get(0)));
 						line = line + "m " + i + " " + findPath(taxis[i].location(), taxis[i].Path.get(0)) + " ";
+						taxis[i].moveTo(findPath(taxis[i].location(), taxis[i].Path.get(0)));
+						System.out.println("taxi" + i);
 						taxis[i].Path.remove(0);
 					}
 				}
@@ -231,7 +232,7 @@ public class Algorithm {
     int findPath(int start, int end){
         for(int i=0; i<network.length; i++){
             if(network[i].getDist(start)==1 && (network[end].getDist(start)-1 == network[i].getDist(end))){
-                //System.out.println(i);
+                System.out.println(i);
 				return i;
             }
         }
@@ -242,9 +243,10 @@ public class Algorithm {
     //find from all taxis the one that can implement new caller into its path with the least cost
     void findClosestTaxi(Passenger caller){
         int pickup=0, dropoff=0, pickIndex=0, costs=0, bestTaxi=0;
+		boolean first=true;
 
         for(int i=0; i<taxis.length; i++){
-			if (taxis[i].full()) {
+			if (taxis[i].full()==false) {
 				for (int j = 0; j < taxis[i].Path.size(); j++) {
 					if (j == 0) {
 						pickup = network[caller.getPosition()].getDist(taxis[i].Path.get(j));
@@ -264,7 +266,8 @@ public class Algorithm {
 				}
 
 
-				if (i == 0) {
+				if (first == true) {
+					first = false;
 					costs = pickup + dropoff;
 					bestTaxi = i;
 				} else if (costs > pickup + dropoff) {
@@ -297,6 +300,7 @@ public class Algorithm {
                 dropIndex = j;
             }
         }
+        taxis[bestTaxi].passangerIn++;
         taxis[bestTaxi].Path.add(dropIndex, caller.getPosition());
 		caller.choosePickUpTaxi(bestTaxi);
     }

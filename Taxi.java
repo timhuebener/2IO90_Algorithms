@@ -4,7 +4,7 @@ import java.util.ArrayList;
 public class Taxi {
 	private int node;
 	private int capacity;
-	private int passengersIn=0;
+	public int passangerIn=0 ;
 	private ArrayList<Passenger> occupants;
 	public ArrayList<Integer> Path = new ArrayList<>();
 	
@@ -27,18 +27,19 @@ public class Taxi {
 	}
 	
 	public boolean full(){
-		if(occupants.size() == passengersIn){
+		if(capacity == passangerIn){
 			return true;
 		}
 		return false;
 	}
 	//picks up a new passenger
 	public void pickUp(Passenger p){
-		if(occupants.size()< capacity)
+		if(occupants.size()< capacity) {
 			occupants.add(p);
-		else
+		}
+		else {
 			System.out.println("error: taxi is over capacity");
-		passengersIn++;
+		}
 	}
 	
 	//removes the first passenger whose destination has been reached then returns true
@@ -46,7 +47,7 @@ public class Taxi {
 		for(int i = 0; i < occupants.size(); i++){
 			if(occupants.get(i).getDestination() == node){
 				occupants.remove(i);
-				passengersIn--;
+				passangerIn--;
 				return true;
 			}
 		}
@@ -55,7 +56,7 @@ public class Taxi {
 	}
 
 	public int getPassengersIn(){
-		return passengersIn;
+		return occupants.size();
 	}
 	
 	public boolean empty(){

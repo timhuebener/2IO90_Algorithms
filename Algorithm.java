@@ -1,4 +1,4 @@
-//main algorythm class for dumbAlgorythm
+//main algorythm class for dumbAlgorithm
 public class Algorithm {
 
 	// all those variables in the beginning
@@ -94,6 +94,10 @@ public class Algorithm {
 
 			//update finding path method
 			for (int i =0; i< taxis.length; i++){
+				for(int k=0; k<taxis[i].Path.size(); k++){
+					System.out.print(taxis[i].Path.get(k));
+				}
+				System.out.println();
 				dpcheck = false;
                 //System.out.println("test");
 				if (taxis[i].Path.size()!=0){
@@ -102,6 +106,7 @@ public class Algorithm {
                         if (network[taxis[i].location()].passengers.get(j).getPickUpTaxi()==i) {
                             //System.out.println("test2");
 							if(dpcheck == false){
+								System.out.println("Remove node " + taxis[i].Path.get(0) + " from taxi " + i);
 								taxis[i].Path.remove(0);
 							}
 							dpcheck = true;
@@ -154,7 +159,7 @@ public class Algorithm {
 	}
 
 	private boolean done() {// done when no more lines in input, no more
-							// passengers in nodes or taxies
+							// passengers in nodes or taxis
 		return (!scanner.hasNextLine() && nodesEmpty() && taxisEmpty());
 	}
 
@@ -232,7 +237,7 @@ public class Algorithm {
     int findPath(int start, int end){
         for(int i=0; i<network.length; i++){
             if(network[i].getDist(start)==1 && (network[end].getDist(start)-1 == network[i].getDist(end))){
-                System.out.println(i);
+                System.out.println("start "+ start + "end" + end);
 				return i;
             }
         }
@@ -249,19 +254,19 @@ public class Algorithm {
 			if (taxis[i].full()==false) {
 				for (int j = 0; j < taxis[i].Path.size(); j++) {
 					if (j == 0) {
-						pickup = network[caller.getPosition()].getDist(taxis[i].Path.get(j));
+						pickup = network[caller.getPosition()].getDist(taxis[i].Path.get(j)) + network[caller.getPosition()].getDist(taxis[i].location());
 						pickIndex = j;
 					} else if (pickup > network[caller.getPosition()].getDist(taxis[i].Path.get(j))) {
-						pickup = network[caller.getPosition()].getDist(taxis[i].Path.get(j));
+						pickup = network[caller.getPosition()].getDist(taxis[i].Path.get(j-1)) + network[caller.getPosition()].getDist(taxis[i].Path.get(j));
 						pickIndex = j;
 					}
 				}
 
 				for (int j = pickIndex; j < taxis[i].Path.size(); j++) {
 					if (j == pickIndex) {
-						dropoff = network[caller.getDestination()].getDist(taxis[i].Path.get(j));
+						dropoff = network[caller.getDestination()].getDist(taxis[i].Path.get(j)) + network[caller.getDestination()].getDist(caller.getDestination());
 					} else if (dropoff > network[caller.getDestination()].getDist(taxis[i].Path.get(j))) {
-						dropoff = network[caller.getDestination()].getDist(taxis[i].Path.get(j));
+						dropoff = network[caller.getDestination()].getDist(taxis[i].Path.get(j)) + network[caller.getDestination()].getDist(taxis[i].Path.get(j-1));
 					}
 				}
 
@@ -287,8 +292,13 @@ public class Algorithm {
                 pickIndex=j;
             }
         }
-        taxis[bestTaxi].Path.add(pickIndex, caller.getPosition());
-
+        if(taxis[bestTaxi].Path.size() != 0) {
+			if (taxis[bestTaxi].Path.get(pickIndex) != caller.getPosition()) {
+				taxis[bestTaxi].Path.add(pickIndex, caller.getPosition());
+			}
+		}else{
+			taxis[bestTaxi].Path.add(pickIndex, caller.getPosition());
+		}
         int dropIndex=0;
         for(int j=pickIndex; j<taxis[bestTaxi].Path.size(); j++){
             if (j == pickIndex) {
@@ -301,7 +311,13 @@ public class Algorithm {
             }
         }
         taxis[bestTaxi].passangerIn++;
-        taxis[bestTaxi].Path.add(dropIndex, caller.getPosition());
+		if(taxis[bestTaxi].Path.size() != 0) {
+			if (taxis[bestTaxi].Path.get(dropIndex) != caller.getPosition()) {
+				taxis[bestTaxi].Path.add(dropIndex, caller.getPosition());
+			}
+		}else{
+			taxis[bestTaxi].Path.add(dropIndex, caller.getPosition());
+		}
 		caller.choosePickUpTaxi(bestTaxi);
     }
 }

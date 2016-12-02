@@ -201,10 +201,9 @@ public class InputClass {
 					conclusters[i][z]=0;	
 			}
 		}
-			conclusters[0][1]=1;
-			conclusters[1][0]=1;
-			for(int i = 2; i < amclusters; i++){//connect clusters
-				int randin = rn.nextInt(i-1);
+			int randin = 0;
+			for(int i = 1; i < amclusters; i++){//connect clusters
+				randin = rn.nextInt(1);
 				conclusters[i][randin]++;
 				conclusters[randin][i]++;
 				for(int z = 0; z < i; z++){//randomly add extra nodes
@@ -214,11 +213,17 @@ public class InputClass {
 						conclusters[z][i]++;
 					}
 					if(clusters[z]<clusters[i]&& conclusters[i][z] != 0 ){//make links stronger
-						conclusters[z][i]=Math.round(clusters[z]*link);
+						conclusters[z][i]=Math.round(clusters[z]*clusters[i]*link);
+						if(conclusters[z][i]==0){
+							conclusters[z][i]=1;
+						}
 						conclusters[i][z]=conclusters[z][i];
 					}
 					if(clusters[z]>=clusters[i] && conclusters[i][z] != 0 ){
-						conclusters[z][i]=Math.round(clusters[i]*link);
+						conclusters[z][i]=Math.round(clusters[i]*clusters[z]*link);
+						if(conclusters[z][i]==0){
+							conclusters[z][i]=1;
+						}
 						conclusters[i][z]=conclusters[z][i];
 					}
 				}
@@ -238,13 +243,17 @@ public class InputClass {
 					}
 					Collections.shuffle(listz);
 					Collections.shuffle(listi);
-					for (int y=0; y<conclusters[z][i]; y++) {
-						node[listi.get(y)] += " " + listz.get(y);
-						node[listz.get(y)] += " "+listi.get(y);
+					for(int k = 0; k<conclusters[i][z]/clusters[i];k++){
+					for (int y=0; y<conclusters[i][z]/clusters[z]; y++) {
+						node[listi.get(y)] += " " + listz.get((y+k)%clusters[z]);
+						node[listz.get((y+k)%(clusters[z]))] += " "+listi.get(y);
 						counter[listi.get(y)]++;
-						counter[listz.get(y)]++;
+						counter[listz.get((y+k)%(clusters[z]))]++;
 					}
 					tempz+=clusters[z];
+				}
+					listi.clear();
+					listz.clear();
 				}
 				tempz = 0;
 				tempi+=clusters[i];

@@ -56,7 +56,7 @@ public class Algorithm {
         // set starting points for taxis in this case, all node 0
 		for (int i = 0; i < taxis.length; i++) {
 			taxis[i] = new Taxi(0, capacity);
-			line = line + "m " + i + " " + 0 + " ";
+			line = line + "m " + (i + 1) + " " + 0 + " ";
 		}
 		scanner.println(line + "c");
 		line = "";
@@ -111,7 +111,7 @@ public class Algorithm {
 							}
 							dpcheck = true;
                             taxis[i].pickUp(network[taxis[i].location()].passengers.get(j));
-                            line = line + "p " + i + " " + network[taxis[i].location()].passengers.get(j).getDestination() + " ";
+                            line = line + "p " + (i + 1) + " " + network[taxis[i].location()].passengers.get(j).getDestination() + " ";
                             network[taxis[i].location()].passengers.remove(j);
                             j--;
                         }
@@ -122,11 +122,11 @@ public class Algorithm {
 							taxis[i].Path.remove(0);
 						}
 						dpcheck = true;
-						line = line + "d " + i + " " + taxis[i].getNode() + " ";
+						line = line + "d " + (i + 1) + " " + taxis[i].getNode() + " ";
 					}
                     //otherwise move
 					if(dpcheck == false){
-						line = line + "m " + i + " " + findPath(taxis[i].location(), taxis[i].Path.get(0)) + " ";
+						line = line + "m " + (i + 1) + " " + findPath(taxis[i].location(), taxis[i].Path.get(0)) + " ";
 						taxis[i].moveTo(findPath(taxis[i].location(), taxis[i].Path.get(0)));
 						System.out.println("taxi" + i);
 						taxis[i].Path.remove(0);

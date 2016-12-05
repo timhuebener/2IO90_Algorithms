@@ -256,7 +256,9 @@ public class Algorithm {
 					if (j == 0) {
 						pickup = network[caller.getPosition()].getDist(taxis[i].Path.get(j)) + network[caller.getPosition()].getDist(taxis[i].location());
 						pickIndex = j;
-					} else if (pickup > network[caller.getPosition()].getDist(taxis[i].Path.get(j))) {
+					}
+
+					else if (pickup > network[caller.getPosition()].getDist(taxis[i].Path.get(j))) {
 						pickup = network[caller.getPosition()].getDist(taxis[i].Path.get(j-1)) + network[caller.getPosition()].getDist(taxis[i].Path.get(j));
 						pickIndex = j;
 					}
@@ -269,6 +271,11 @@ public class Algorithm {
 						dropoff = network[caller.getDestination()].getDist(taxis[i].Path.get(j)) + network[caller.getDestination()].getDist(taxis[i].Path.get(j-1));
 					}
 				}
+
+				/*if (pickup+dropoff>= network[caller.getPosition()].getDist(taxis[i].Path.get(taxis[i].Path.size()))+network[caller.getPosition()].getDist(caller.getDestination()))
+				{
+					costs = network[caller.getPosition()].getDist(taxis[i].Path.get(taxis[i].Path.size()))+network[caller.getPosition()].getDist(caller.getDestination());
+				}*/
 
 
 				if (first == true) {
@@ -294,7 +301,11 @@ public class Algorithm {
         }
         if(taxis[bestTaxi].Path.size() != 0) {
 			if (taxis[bestTaxi].Path.get(pickIndex) != caller.getPosition()) {
-				taxis[bestTaxi].Path.add(pickIndex, caller.getPosition());
+				if (pickIndex>0){
+					if (taxis[bestTaxi].Path.get(pickIndex-1) != caller.getPosition());
+					taxis[bestTaxi].Path.add(pickIndex, caller.getPosition());
+				}
+				else taxis[bestTaxi].Path.add(pickIndex, caller.getPosition());
 			}
 		}else{
 			taxis[bestTaxi].Path.add(pickIndex, caller.getPosition());
@@ -313,7 +324,13 @@ public class Algorithm {
         taxis[bestTaxi].passangerIn++;
 		if(taxis[bestTaxi].Path.size() != 0) {
 			if (taxis[bestTaxi].Path.get(dropIndex) != caller.getPosition()) {
-				taxis[bestTaxi].Path.add(dropIndex, caller.getPosition());
+				if (dropIndex > 0){
+					if(taxis[bestTaxi].Path.get(dropIndex-1) != caller.getPosition()){
+						taxis[bestTaxi].Path.add(dropIndex, caller.getPosition());
+					}
+				}else {
+					taxis[bestTaxi].Path.add(dropIndex, caller.getPosition());
+				}
 			}
 		}else{
 			taxis[bestTaxi].Path.add(dropIndex, caller.getPosition());

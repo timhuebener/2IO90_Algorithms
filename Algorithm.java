@@ -129,7 +129,7 @@ public class Algorithm {
 						line = line + "m " + (i + 1) + " " + findPath(taxis[i].location(), taxis[i].Path.get(0)) + " ";
 						taxis[i].moveTo(findPath(taxis[i].location(), taxis[i].Path.get(0)));
 						System.out.println("taxi" + (i + 1));
-						taxis[i].Path.remove(0);
+						//taxis[i].Path.remove(0);
 					}
 				}
 
@@ -248,20 +248,27 @@ public class Algorithm {
     //find from all taxis the one that can implement new caller into its path with the least cost
     void findClosestTaxi(Passenger caller){
         int pickup=0, dropoff=0, pickIndex=0, costs=0, bestTaxi=0;
+		int[] pickupIndex = new int[taxis.length];
+		int[] dropoffIndex = new int[taxis.length];
+
 		boolean first=true;
 
         for(int i=0; i<taxis.length; i++){
-			// if taxi is empty you only calculate only the pickup
+			// if taxi is empty you only calculate only the pickup distance to the change
 			if (taxis[i].Path.size()==0){
 				if (first == true) {
 					// if its first iteration you get the cost for the first taxi
 					first = false;
-					costs = network[caller.getPosition()].getDist(taxis[i].location());
+					pickupIndex[i]=0;
+					dropoffIndex[i]=1;
+					costs = network[caller.getPosition()].getDist(taxis[i].location()) + network[caller.getDestination()].getDist(caller.getPosition());
 					bestTaxi = i;
-				} else if (costs > network[caller.getPosition()].getDist(taxis[i].location())) {
+				} else if (costs > network[caller.getPosition()].getDist(taxis[i].location()) + network[caller.getDestination()].getDist(caller.getPosition())) {
 					// we find a better taxi
 					costs = network[caller.getPosition()].getDist(taxis[i].location());
 					bestTaxi = i;
+					pickupIndex[i]=0;
+					dropoffIndex[i]=1;
 				}
 			}
 			// if taxi is full we don't check
@@ -269,51 +276,50 @@ public class Algorithm {
 				for (int j = 0; j < taxis[i].Path.size(); j++) {
 					//we find the best place to place the pickup of the passenger, j is on which node in the path we are checking ( j=0 before node 0)
 					if (j == 0) {
-						pickup = network[caller.getPosition()].getDist(taxis[i].Path.get(0)) + network[caller.getPosition()].getDist(taxis[i].location());
-						pickIndex = j;
+						pickup = network[caller.getPosition()].getDist(taxis[i].Path.get(0)) + network[caller.getPosition()].getDist(taxis[i].location())
+											- network[taxis[i].location()].getDist(taxis[i].Path.get(0));
+						pickupIndex[i] = j;
 					}
 					// We find the smallest pickup path change value between 2 nodes
 					else if (pickup > network[caller.getPosition()].getDist(taxis[i].Path.get(j-1)) + network[caller.getPosition()].getDist(taxis[i].Path.get(j))) {
 						//its better to pick the caller between those 2 nodes
-						pickup = network[caller.getPosition()].getDist(taxis[i].Path.get(j-1)) + network[caller.getPosition()].getDist(taxis[i].Path.get(j));
-						pickIndex = j;
+						pickup = network[caller.getPosition()].getDist(taxis[i].Path.get(j-1)) + network[caller.getPosition()].getDist(taxis[i].Path.get(j))
+											-  network[taxis[i].Path.get(j)].getDist(taxis[i].Path.get(j-1));
+						pickupIndex[i] = j;
 					}
 
 				}
 
 
-
-				for (int j = pickIndex; j < taxis[i].Path.size(); j++) {
-					if (j == pickIndex) {
+				//here we calcualate the drop index starting from the pick one
+				for (int j = pickupIndex[i]; j < taxis[i].Path.size(); j++) {
+					if (j == pickupIndex[i]) {
 						//we start from the pick index, and check if its best to immediately drop off or do it in a later stage
-						dropoff = network[caller.getDestination()].getDist(taxis[i].Path.get(j)) + network[caller.getDestination()].getDist(caller.getPosition());
+						dropoff = network[caller.getDestination()].getDist(taxis[i].Path.get(j)) + network[caller.getDestination()].getDist(caller.getPosition())
+											- network[caller.getPosition()].getDist(taxis[i].Path.get(j));
+						dropoffIndex[i] = j+1;
 					}
 					else if (dropoff > network[caller.getDestination()].getDist(taxis[i].Path.get(j))) {
-
-						dropoff = network[caller.getDestination()].getDist(taxis[i].Path.get(j)) + network[caller.getDestination()].getDist(taxis[i].Path.get(j-1));
+						dropoff = network[caller.getDestination()].getDist(taxis[i].Path.get(j)) + network[caller.getDestination()].getDist(taxis[i].Path.get(j-1))
+											- network[taxis[i].Path.get(j-1)].getDist(taxis[i].Path.get(j));
+						dropoffIndex[i] = j+1;
+						//+1 since when we add pickup we need to move it to the right of the array
 					}
 				}
-				if (taxis[i].Path.size()!=0) {
-					if (dropoff > network[caller.getDestination()].getDist(taxis[i].Path.get(taxis[i].Path.size() - 1))) {
-						dropoff = network[caller.getDestination()].getDist(taxis[i].Path.get(taxis[i].Path.size() - 1));
-					}
+				//if (taxis[i].Path.size()!=0) {
+					//In case the best Drop off is after the path
+				if (dropoff > network[caller.getDestination()].getDist(taxis[i].Path.get(taxis[i].Path.size() -1))) {
+					dropoff = network[caller.getDestination()].getDist(taxis[i].Path.get(taxis[i].Path.size() - 1));
+					dropoffIndex[i] = taxis[i].Path.size();
 				}
-				/*if(taxis[i].Path.size()!=0)
-				{
-				if (dropoff > network[caller.getDestination()].getDist(taxis[i].Path.get(taxis[i].Path.size()-1))){
-					dropoff = network[caller.getDestination()].getDist(taxis[i].Path.get(taxis[i].Path.size()-1));
+				//}
+				//In case its best to pickup and drop off after finishing the path
+				if( pickup+dropoff > network[caller.getDestination()].getDist(caller.getPosition()) + network[caller.getPosition()].getDist(taxis[i].Path.get(taxis[i].Path.size() - 1))){
+					pickup = network[caller.getPosition()].getDist(taxis[i].Path.get(taxis[i].Path.size() - 1));
+					pickupIndex[i] = taxis[i].Path.size();
+					dropoff = network[caller.getDestination()].getDist(caller.getPosition());
+					dropoffIndex[i] =taxis[i].Path.size()+1;
 				}
-				}
-				else {
-					dropoff = network[caller.getDestination()].getDist(taxis[i].Path.get(taxis[i].Path.size()));
-				}*/
-
-
-				/*if (pickup+dropoff>= network[caller.getPosition()].getDist(taxis[i].Path.get(taxis[i].Path.size()))+network[caller.getPosition()].getDist(caller.getDestination()))
-				{
-					costs = network[caller.getPosition()].getDist(taxis[i].Path.get(taxis[i].Path.size()))+network[caller.getPosition()].getDist(caller.getDestination());
-				}*/
-
 
 				if (first == true) {
 					// if its first iteration you get the cost for the first taxi
@@ -327,8 +333,10 @@ public class Algorithm {
 				}
 			}
         }
+
         //found best taxi and now we need to get the drop and pick index by having the same for loops above but only for the taxi which is best
-        for(int j=0; j<taxis[bestTaxi].Path.size(); j++){
+
+		/*for(int j=0; j<taxis[bestTaxi].Path.size(); j++){
             if (j == 0) {
                 pickup = network[caller.getPosition()].getDist(taxis[bestTaxi].Path.get(0)) + network[caller.getPosition()].getDist(taxis[bestTaxi].location());
                 pickIndex=j;
@@ -337,23 +345,41 @@ public class Algorithm {
                 pickup = network[caller.getPosition()].getDist(taxis[bestTaxi].Path.get(j-1)) + network[caller.getPosition()].getDist(taxis[bestTaxi].Path.get(j));
                 pickIndex=j;
             }
-        }
+        }*/
+		/*boolean isInside=false;
 
+		for (int i=0;i<taxis[bestTaxi].Path.size();i++)
+		{
+			if (taxis[bestTaxi].Path.get(i)== caller.getPosition()) isInside=true;
+		}
+		if(isInside==false) taxis[bestTaxi].Path.add(pickupIndex[bestTaxi], caller.getPosition());
+
+		boolean isInside2=false;
+		for (int i=pickupIndex[bestTaxi];i<taxis[bestTaxi].Path.size();i++)
+		{
+			if (taxis[bestTaxi].Path.get(i)== caller.getPosition()) isInside2=true;
+		}
+		if(isInside2==false) taxis[bestTaxi].Path.add(dropoffIndex[bestTaxi], caller.getPosition());
+		*/
         if(taxis[bestTaxi].Path.size() != 0) {
-			if (taxis[bestTaxi].Path.get(pickIndex) != caller.getPosition()) {
-				if (pickIndex>0){
-					if (taxis[bestTaxi].Path.get(pickIndex-1) != caller.getPosition());
-					taxis[bestTaxi].Path.add(pickIndex, caller.getPosition());
+			if(taxis[bestTaxi].Path.size() == pickupIndex[bestTaxi] ){
+				taxis[bestTaxi].Path.add(pickupIndex[bestTaxi], caller.getPosition());
+			}
+			else if (taxis[bestTaxi].Path.get(pickupIndex[bestTaxi]) != caller.getPosition()) {
+				if (pickupIndex[bestTaxi]>0){
+					if (taxis[bestTaxi].Path.get(pickupIndex[bestTaxi]-1) != caller.getPosition());
+					taxis[bestTaxi].Path.add(pickupIndex[bestTaxi], caller.getPosition());
 				}
-				else taxis[bestTaxi].Path.add(pickIndex, caller.getPosition());
+				else taxis[bestTaxi].Path.add(pickupIndex[bestTaxi], caller.getPosition());
 			}
 		}else{
-			taxis[bestTaxi].Path.add(pickIndex, caller.getPosition());
+			taxis[bestTaxi].Path.add(pickupIndex[bestTaxi], caller.getPosition());
 		}
-        int dropIndex=0;
+
+		//int dropIndex=0;
 
 		//now we compute the drop Index
-        for(int j=pickIndex; j<taxis[bestTaxi].Path.size(); j++){
+       /* for(int j=pickIndex; j<taxis[bestTaxi].Path.size(); j++){
             if (j == pickIndex) {
 				dropoff = network[caller.getDestination()].getDist(taxis[bestTaxi].Path.get(j)) + network[caller.getDestination()].getDist(caller.getPosition());
 				dropIndex=pickIndex;
@@ -361,7 +387,7 @@ public class Algorithm {
 				dropoff = network[caller.getDestination()].getDist(taxis[bestTaxi].Path.get(j)) + network[caller.getDestination()].getDist(taxis[bestTaxi].Path.get(j-1));
 				dropIndex=j;
 			}
-        }
+        }*/
 
 		/*if(taxis[bestTaxi].Path.size()!=0){
 			if (dropoff > network[caller.getDestination()].getDist(taxis[bestTaxi].Path.get(taxis[bestTaxi].Path.size()-1))){
@@ -373,22 +399,24 @@ public class Algorithm {
 			dropIndex = taxis[bestTaxi].Path.get(taxis[bestTaxi].Path.size());
 			}*/
 
-
-		System.out.println("Taxi:" + bestTaxi + "Should have a drop at: " + dropIndex  + " for a pickup at:" + pickIndex);
-        taxis[bestTaxi].passangerIn++;
 		if(taxis[bestTaxi].Path.size() != 0) {
-			if (taxis[bestTaxi].Path.get(dropIndex) != caller.getPosition()) {
-				if (dropIndex > 0){
-					if(taxis[bestTaxi].Path.get(dropIndex-1) != caller.getDestination()){
-						taxis[bestTaxi].Path.add(dropIndex, caller.getDestination());
+			if(taxis[bestTaxi].Path.size() == dropoffIndex[bestTaxi] ){
+				taxis[bestTaxi].Path.add(dropoffIndex[bestTaxi], caller.getDestination());
+			}
+			else if (taxis[bestTaxi].Path.get(dropoffIndex[bestTaxi]) != caller.getPosition()) {
+				if (dropoffIndex[bestTaxi] > 0){
+					if(taxis[bestTaxi].Path.get(dropoffIndex[bestTaxi]-1) != caller.getDestination()){
+						taxis[bestTaxi].Path.add(dropoffIndex[bestTaxi], caller.getDestination());
 					}
 				}else {
-					taxis[bestTaxi].Path.add(dropIndex, caller.getDestination());
+					taxis[bestTaxi].Path.add(dropoffIndex[bestTaxi], caller.getDestination());
 				}
 			}
 		}else{
-			taxis[bestTaxi].Path.add(dropIndex, caller.getPosition());
+			System.out.println("Error: In finding closest taxi you put dropoff location wtihout having pickup");
 		}
+
+		taxis[bestTaxi].passangerIn++;
 		caller.choosePickUpTaxi(bestTaxi);
     }
 }

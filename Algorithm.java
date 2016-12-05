@@ -294,14 +294,14 @@ public class Algorithm {
 				}
 			}
         }
-        //found best taxi
+        //found best taxi and now we need to get the drop and pick index by having the same for loops above but only for the taxi which is best
         for(int j=0; j<taxis[bestTaxi].Path.size(); j++){
             if (j == 0) {
-                pickup = network[caller.getPosition()].getDist(taxis[bestTaxi].Path.get(j));
+                pickup = network[caller.getPosition()].getDist(taxis[bestTaxi].Path.get(0)) + network[caller.getPosition()].getDist(taxis[bestTaxi].location());
                 pickIndex=j;
             }
-            else if(pickup > network[caller.getPosition()].getDist(taxis[bestTaxi].Path.get(j))){
-                pickup = network[caller.getPosition()].getDist(taxis[bestTaxi].Path.get(j));
+            else if(pickup > network[caller.getPosition()].getDist(taxis[bestTaxi].Path.get(j-1)) + network[caller.getPosition()].getDist(taxis[bestTaxi].Path.get(j))){
+                pickup = network[caller.getPosition()].getDist(taxis[bestTaxi].Path.get(j-1)) + network[caller.getPosition()].getDist(taxis[bestTaxi].Path.get(j));
                 pickIndex=j;
             }
         }
@@ -318,27 +318,27 @@ public class Algorithm {
 			taxis[bestTaxi].Path.add(pickIndex, caller.getPosition());
 		}
         int dropIndex=0;
-		System.out.println("Taxi:" + bestTaxi + "Should have a drop at: " + dropIndex + " for a pickup at:" + pickIndex);
+
+		//now we compute the drop Index
         for(int j=pickIndex; j<taxis[bestTaxi].Path.size(); j++){
             if (j == pickIndex) {
-                dropoff = network[caller.getDestination()].getDist(taxis[bestTaxi].Path.get(j));
-                dropIndex = j;
-            }
-            else if(dropoff > network[caller.getDestination()].getDist(taxis[bestTaxi].Path.get(j))){
-                dropoff = network[caller.getDestination()].getDist(taxis[bestTaxi].Path.get(j));
-                dropIndex = j;
-            }
+				dropoff = network[caller.getDestination()].getDist(taxis[bestTaxi].Path.get(j)) + network[caller.getDestination()].getDist(caller.getPosition());
+				dropIndex=pickIndex;
+			} else if (dropoff > network[caller.getDestination()].getDist(taxis[bestTaxi].Path.get(j))) {
+				dropoff = network[caller.getDestination()].getDist(taxis[bestTaxi].Path.get(j)) + network[caller.getDestination()].getDist(taxis[bestTaxi].Path.get(j-1));
+				dropIndex=j;
+			}
         }
-
+		System.out.println("Taxi:" + bestTaxi + "Should have a drop at: " + dropIndex + " for a pickup at:" + pickIndex);
         taxis[bestTaxi].passangerIn++;
 		if(taxis[bestTaxi].Path.size() != 0) {
 			if (taxis[bestTaxi].Path.get(dropIndex) != caller.getPosition()) {
 				if (dropIndex > 0){
-					if(taxis[bestTaxi].Path.get(dropIndex-1) != caller.getPosition()){
-						taxis[bestTaxi].Path.add(dropIndex, caller.getPosition());
+					if(taxis[bestTaxi].Path.get(dropIndex-1) != caller.getDestination()){
+						taxis[bestTaxi].Path.add(dropIndex, caller.getDestination());
 					}
 				}else {
-					taxis[bestTaxi].Path.add(dropIndex, caller.getPosition());
+					taxis[bestTaxi].Path.add(dropIndex, caller.getDestination());
 				}
 			}
 		}else{

@@ -106,7 +106,7 @@ public class Algorithm {
                         if (network[taxis[i].location()].passengers.get(j).getPickUpTaxi()==i) {
                             //System.out.println("test2");
 							if(dpcheck == false){
-								System.out.println("Remove node " + taxis[i].Path.get(0) + " from taxi " + i);
+								System.out.println("Remove node " + taxis[i].Path.get(0) + " from taxi " + (i + 1));
 								taxis[i].Path.remove(0);
 							}
 							dpcheck = true;
@@ -128,7 +128,7 @@ public class Algorithm {
 					if(dpcheck == false){
 						line = line + "m " + (i + 1) + " " + findPath(taxis[i].location(), taxis[i].Path.get(0)) + " ";
 						taxis[i].moveTo(findPath(taxis[i].location(), taxis[i].Path.get(0)));
-						System.out.println("taxi" + i);
+						System.out.println("taxi" + (i + 1));
 						taxis[i].Path.remove(0);
 					}
 				}

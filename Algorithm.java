@@ -92,7 +92,6 @@ public class Algorithm {
 
 			//determine for each taxi what to do (pickup, drop, move)
 
-			//update finding path method
 			for (int i =0; i< taxis.length; i++){
 				for(int k=0; k<taxis[i].Path.size(); k++){
 					System.out.print(taxis[i].Path.get(k));
@@ -105,11 +104,12 @@ public class Algorithm {
                         //check if can pickup
                         if (network[taxis[i].location()].passengers.get(j).getPickUpTaxi()==i) {
                             //System.out.println("test2");
-							if(dpcheck == false){
+							if(!dpcheck){
 								System.out.println("Remove node " + taxis[i].Path.get(0) + " from taxi " + (i + 1));
 								taxis[i].Path.remove(0);
+								dpcheck = true;
 							}
-							dpcheck = true;
+
                             taxis[i].pickUp(network[taxis[i].location()].passengers.get(j));
                             line = line + "p " + (i + 1) + " " + network[taxis[i].location()].passengers.get(j).getDestination() + " ";
                             network[taxis[i].location()].passengers.remove(j);
@@ -118,14 +118,15 @@ public class Algorithm {
                     }
 					//check if can drop
 					if(taxis[i].drop()){
-						if(dpcheck == false){
+						if(!dpcheck){
 							taxis[i].Path.remove(0);
+							dpcheck = true;
 						}
-						dpcheck = true;
+
 						line = line + "d " + (i + 1) + " " + taxis[i].getNode() + " ";
 					}
                     //otherwise move
-					if(dpcheck == false){
+					if(!dpcheck){
 						line = line + "m " + (i + 1) + " " + findPath(taxis[i].location(), taxis[i].Path.get(0)) + " ";
 						taxis[i].moveTo(findPath(taxis[i].location(), taxis[i].Path.get(0)));
 						System.out.println("taxi" + (i + 1));
@@ -242,7 +243,7 @@ public class Algorithm {
             }
         }
         System.out.println("ERROR: No next Node found");
-        return 0;
+        return start;
     }
 
     //find from all taxis the one that can implement new caller into its path with the least cost
@@ -256,7 +257,7 @@ public class Algorithm {
         for(int i=0; i<taxis.length; i++){
 			// if taxi is empty you only calculate only the pickup distance to the change
 			if (taxis[i].Path.size()==0){
-				if (first == true) {
+				if (first) {
 					// if its first iteration you get the cost for the first taxi
 					first = false;
 					pickupIndex[i]=0;
@@ -272,7 +273,7 @@ public class Algorithm {
 				}
 			}
 			// if taxi is full we don't check
-			else if (taxis[i].full()==false) {
+			else if (!taxis[i].full()) {
 				for (int j = 0; j < taxis[i].Path.size(); j++) {
 					//we find the best place to place the pickup of the passenger, j is on which node in the path we are checking ( j=0 before node 0)
 					if (j == 0) {
@@ -321,7 +322,7 @@ public class Algorithm {
 					dropoffIndex[i] =taxis[i].Path.size()+1;
 				}
 
-				if (first == true) {
+				if (first) {
 					// if its first iteration you get the cost for the first taxi
 					first = false;
 					costs = pickup + dropoff;
@@ -362,8 +363,13 @@ public class Algorithm {
 		if(isInside2==false) taxis[bestTaxi].Path.add(dropoffIndex[bestTaxi], caller.getPosition());
 		*/
         if(taxis[bestTaxi].Path.size() != 0) {
-			if(taxis[bestTaxi].Path.size() == pickupIndex[bestTaxi] ){
-				taxis[bestTaxi].Path.add(pickupIndex[bestTaxi], caller.getPosition());
+			if(taxis[bestTaxi].Path.size() == pickupIndex[bestTaxi]){
+				if (pickupIndex[bestTaxi]>0){
+					if (taxis[bestTaxi].Path.get(pickupIndex[bestTaxi]-1) != caller.getPosition());
+					taxis[bestTaxi].Path.add(pickupIndex[bestTaxi], caller.getPosition());
+				}
+				else taxis[bestTaxi].Path.add(pickupIndex[bestTaxi], caller.getPosition());
+
 			}
 			else if (taxis[bestTaxi].Path.get(pickupIndex[bestTaxi]) != caller.getPosition()) {
 				if (pickupIndex[bestTaxi]>0){
@@ -400,21 +406,19 @@ public class Algorithm {
 			}*/
 
 		if(taxis[bestTaxi].Path.size() != 0) {
-			if(taxis[bestTaxi].Path.size() == dropoffIndex[bestTaxi] ){
-				taxis[bestTaxi].Path.add(dropoffIndex[bestTaxi], caller.getDestination());
-			}
-			else if (taxis[bestTaxi].Path.get(dropoffIndex[bestTaxi]) != caller.getPosition()) {
-				if (dropoffIndex[bestTaxi] > 0){
-					if(taxis[bestTaxi].Path.get(dropoffIndex[bestTaxi]-1) != caller.getDestination()){
-						taxis[bestTaxi].Path.add(dropoffIndex[bestTaxi], caller.getDestination());
-					}
-				}else {
+			if (taxis[bestTaxi].Path.size() == dropoffIndex[bestTaxi]) {
+				if (taxis[bestTaxi].Path.get(dropoffIndex[bestTaxi] - 1) != caller.getDestination()) {
+					taxis[bestTaxi].Path.add(dropoffIndex[bestTaxi], caller.getDestination());
+				}
+			} else if (taxis[bestTaxi].Path.get(dropoffIndex[bestTaxi]) != caller.getDestination()) {
+				if (taxis[bestTaxi].Path.get(dropoffIndex[bestTaxi] - 1) != caller.getDestination()) {
 					taxis[bestTaxi].Path.add(dropoffIndex[bestTaxi], caller.getDestination());
 				}
 			}
-		}else{
-			System.out.println("Error: In finding closest taxi you put dropoff location wtihout having pickup");
-		}
+		}else {
+				System.out.println("Error: In finding closest taxi you put dropoff location wtihout having pickup");
+			}
+
 
 		taxis[bestTaxi].passangerIn++;
 		caller.choosePickUpTaxi(bestTaxi);

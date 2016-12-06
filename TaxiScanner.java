@@ -37,7 +37,7 @@ public class TaxiScanner {
      */
     private TaxiScanner(){
         state = State.INITIAL;
-        File input = new File("C:\\Users\\Nikolay\\Desktop\\Current\\DBL algorithms\\2IO90_Algorithms\\input.txt");
+        File input = new File("D:\\Users\\Jelle Schukken\\Desktop\\Input.txt");
         try {
 			System.setIn(new FileInputStream(input));
 		} catch (FileNotFoundException e) {

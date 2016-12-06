@@ -1,26 +1,18 @@
 //keeps track of the passenger, currently just its destination
 //later also time spent and such.
 public class Passenger {
-	private int destination;
-	private int position;
-	private int pickUpTaxi;
+	private int destination,taxi;
 
-	public Passenger(int dest, int pos){
+	public Passenger(int dest, int taxi) {
 		destination = dest;
-		position = pos;
+		this.taxi = taxi;
 	}
-	
-	public int getDestination(){
+
+	public int getDestination() {
 		return destination;
 	}
-
-	public int getPosition(){ return position;}
-
-	public void  choosePickUpTaxi(int p){
-		pickUpTaxi = p;
-	}
-
-	public int getPickUpTaxi(){
-		return pickUpTaxi;
+	
+	public int getTaxi(){
+		return taxi;
 	}
 }

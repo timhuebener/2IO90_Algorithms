@@ -243,7 +243,7 @@ public class Algorithm {
             }
         }
         System.out.println("ERROR: No next Node found");
-        return start;
+        return 0;
     }
 
     //find from all taxis the one that can implement new caller into its path with the least cost
@@ -373,8 +373,9 @@ public class Algorithm {
 			}
 			else if (taxis[bestTaxi].Path.get(pickupIndex[bestTaxi]) != caller.getPosition()) {
 				if (pickupIndex[bestTaxi]>0){
-					if (taxis[bestTaxi].Path.get(pickupIndex[bestTaxi]-1) != caller.getPosition());
-					taxis[bestTaxi].Path.add(pickupIndex[bestTaxi], caller.getPosition());
+					if (taxis[bestTaxi].Path.get(pickupIndex[bestTaxi]-1) != caller.getPosition()) {
+						taxis[bestTaxi].Path.add(pickupIndex[bestTaxi], caller.getPosition());
+					}
 				}
 				else taxis[bestTaxi].Path.add(pickupIndex[bestTaxi], caller.getPosition());
 			}

@@ -327,7 +327,11 @@ public class InputClass {
 			nodestart+=clustersarray.get(i);
 		}
 		nodeend=nodestart;
+<<<<<<< HEAD
 		nodeend+=rn.nextInt(clustersarray.get(cluster1));
+=======
+		nodeend+=rn.nextInt(clustersarray.get(cluster1));//+random amount of nodes in cluster
+>>>>>>> origin/master
 		nodestart+=rn.nextInt(clustersarray.get(cluster1));
 		result= " "+nodestart+" "+nodeend;
 		return result;
@@ -339,8 +343,13 @@ public class InputClass {
 		String result;
 		int cluster1 = rn.nextInt(amclusters-1);
 		cluster2=cluster1;
+<<<<<<< HEAD
 		while(cluster2!=cluster1){
 		cluster2 = rn.nextInt(amclusters-1);
+=======
+		while(cluster2==cluster1 && amclusters != 1){//pick unique second cluster if there is one
+		cluster2 = rn.nextInt(amclusters)+1;//we count nodes from 1 here 
+>>>>>>> origin/master
 		}
 		for(int i=0; i < cluster1; i++){
 			nodestart+=clustersarray.get(i);
@@ -348,6 +357,7 @@ public class InputClass {
 		for(int i=0; i < cluster2; i++){
 			nodeend+=clustersarray.get(i);
 		}
+<<<<<<< HEAD
 		nodeend+=rn.nextInt(clustersarray.get(cluster2));
 		nodestart+=rn.nextInt(clustersarray.get(cluster1));
 		result= " "+nodestart+" "+nodeend;
@@ -355,6 +365,17 @@ public class InputClass {
 	}
 	String customer3(){
 		String result = " "+ rn.nextInt(amclusters-1) +" "+ rn.nextInt(amclusters-1);
+=======
+		nodeend+=rn.nextInt(clustersarray.get(cluster2-1));//random clusters
+		nodestart+=rn.nextInt(clustersarray.get(cluster1-1));
+		result= " "+nodestart+" "+nodeend;//return the customer order
+		return result;
+	}
+	String customer3(){
+		String result;//totally random 2 nodes
+		result = " "+ rn.nextInt(amNodes-1) +" "+ rn.nextInt(amNodes-1);
+		
+>>>>>>> origin/master
 		return result;
 	}
 }

@@ -35,19 +35,17 @@ public class InputClass {
 	int start;
 	int end;
 	double density;
-	//arrays for incoming calls
 	ArrayList<Integer> customerstype = new ArrayList<Integer>();
 	ArrayList<Integer> customersstart = new ArrayList<Integer>();
 	ArrayList<Integer> customersend = new ArrayList<Integer>();
-	ArrayList<Double> customersdensity = new ArrayList<Double>();
-	
-	//real dumb array didnt know how else to do it
 	ArrayList<Integer> clustersarray = new ArrayList<Integer>();
+	ArrayList<Double> customersdensity = new ArrayList<Double>();
 
 
-	public static void main(String[] args){//take input
+
+	public static void main(String[] args){
 		InputClass temp = new InputClass();
-	    System.out.println("Alpha, double between 0 and 1"); 
+		System.out.println("Alpha, double between 0 and 1"); 
 		temp.alpha = scanner.nextFloat();
 		System.out.println("Maximum time allowed for one person, int larger than 0"); 
 		temp.maxTime = scanner.nextInt();
@@ -70,7 +68,7 @@ public class InputClass {
 		System.out.println("2 = far customers");
 		System.out.println("3 = random customers");
 		System.out.println("4 = end day");
-		while(temp.type != 4){//loop for customers
+		while(temp.type != 4){
 			temp.type = scanner.nextInt();
 			if(temp.type!=4){
 			temp.start = scanner.nextInt();
@@ -88,10 +86,20 @@ public class InputClass {
 		
 		System.out.println("End training periode, int larger than 0");
 		temp.training = scanner.nextInt();
+		
+		
+		
 
-		//print output
+
+
+
+
+
+
+
+
 		try {
-			System.setOut(new PrintStream(new BufferedOutputStream(new FileOutputStream("C:\\Users\\s157937\\Documents\\Jaar_2_Sofware_sience\\q2\\algorithms\\input.txt")), true));
+			System.setOut(new PrintStream(new BufferedOutputStream(new FileOutputStream("\\Input\\Input")), true));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -104,9 +112,10 @@ public class InputClass {
 		System.out.println(temp.linelast());
 		temp.simPeople();
 		
+
 	}
 
-//triv lines
+
 	private int lineOne(){
 		return 5 + amNodes;
 	}
@@ -139,42 +148,41 @@ public class InputClass {
 
 	
 	void simGraph(){
-		int[] clusters = new int[amclusters];//array amount of nodes per cluster
-		int[] counter = new int[amNodes];//degree of every node
-		String[] node = new String[amNodes];//adjacency list all nodes to be printed
-		//pre fill arrays
+		int[] clusters = new int[amclusters];
+		int[] counter = new int[amNodes];
+		String[] node = new String[amNodes];
 		for(int i = 0; i < amNodes;i++){
 			node[i]="";
 			counter[i]=0;
 		}
-		for(int i = 0; i < amclusters;i++){//every cluster has at least 2 nodes
+		for(int i = 0; i < amclusters;i++){
 			clusters[i]=2;
 		}
 
-		for(int i=2*amclusters; i<amNodes;i++){//randomly divide remaining nodes over clusters
+		for(int i=2*amclusters; i<amNodes;i++){
 			clusters[rn.nextInt(amclusters)]++;
 		}
 
 
-		int temp = 0;//first node of the cluster we are working on
+		int temp = 0;
 
 		for(int k=0; k<amclusters;k++){//make all clusters
 
-			int temph=temp+1;//second node of the cluster we are working on
-			node[temph] += " " + temp;//add to adjacency matrix
+			int temph=temp+1;
+			node[temph] += " " + temp;
 			node[temp] += " "+temph;
 			counter[temph]++;
 			counter[temp]++;
 			for(int i = 2; i < clusters[k]; i++){//connect graph
-				int tempr = rn.nextInt(i-1);//pick random already connected node
-				int store1 = i+ temp;//connect the new node
+				int tempr = rn.nextInt(i-1);
+				int store1 = i+ temp;
 				int store2 = temp+tempr;
 				node[store1] += " " + store2;
 				node[store2] += " "+store1;
 				counter[store1]++;
 				counter[store2]++;
 				for(int z = temp; z < store1; z++){//randomly add extra nodes
-					double tempr2 = Math.random();//add a node we dont have yet with chance conNodes
+					double tempr2 = Math.random();
 					if(tempr2<conNodes && store2 != z ){
 						node[store1] += " " + z;
 						node[z] += " "+store1;
@@ -184,35 +192,40 @@ public class InputClass {
 				}
 			}
 
-			temp+= clusters[k];//temp is first node next cluster
+			temp+= clusters[k];
 		}
 		if(amclusters>1){
-			int conclusters[][]=new int[amclusters][amclusters];//contains amount of nodes between 2 clusters
+			int conclusters[][]=new int[amclusters][amclusters];
 			for(int i = 0; i < amclusters; i++){//finalize links
 				for(int z = 0; z < amclusters; z++){//randomly add extra nodes
 					conclusters[i][z]=0;	
 			}
 		}
-			int randin = 0;//random cluster
-			for(int i = 1; i < amclusters; i++){//connect clusters with 1 node
+			int randin = 0;
+			for(int i = 1; i < amclusters; i++){//connect clusters
+				randin = rn.nextInt(1);
 				conclusters[i][randin]++;
 				conclusters[randin][i]++;
-				randin = rn.nextInt(i);//cluster for next iteration 
-				for(int z = 0; z < i; z++){//randomly add extra clusters
+				for(int z = 0; z < i; z++){//randomly add extra nodes
 					double tempr2 = Math.random();
 					if(tempr2<conClusters && conclusters[i][z] == 0 ){
 						conclusters[i][z]++;
 						conclusters[z][i]++;
 					}
-					if(conclusters[i][z] != 0 ){//make links stronger
+					if(clusters[z]<clusters[i]&& conclusters[i][z] != 0 ){//make links stronger
 						conclusters[z][i]=Math.round(clusters[z]*clusters[i]*link);
-						if(conclusters[z][i]==0){//in case link is 0 keep connected
+						if(conclusters[z][i]==0){
 							conclusters[z][i]=1;
 						}
-						conclusters[i][z]=conclusters[z][i];//mirror it not needed because array
-						//is reflexive  
+						conclusters[i][z]=conclusters[z][i];
 					}
-					
+					if(clusters[z]>=clusters[i] && conclusters[i][z] != 0 ){
+						conclusters[z][i]=Math.round(clusters[i]*clusters[z]*link);
+						if(conclusters[z][i]==0){
+							conclusters[z][i]=1;
+						}
+						conclusters[i][z]=conclusters[z][i];
+					}
 				}
 			}
 			
@@ -221,49 +234,43 @@ public class InputClass {
 			for(int i = 0; i < amclusters; i++){//finalize links
 				for(int z = 0; z < i; z++){//randomly add extra nodes
 					ArrayList<Integer> listz = new ArrayList<Integer>();
-					for (int y=tempz; y<tempz+clusters[z]; y++) {//make array list with all nodes 1 cluster
+					for (int y=tempz; y<tempz+clusters[z]; y++) {
 						listz.add(new Integer(y));
 					}
-					ArrayList<Integer> listi = new ArrayList<Integer>();//other cluster
+					ArrayList<Integer> listi = new ArrayList<Integer>();
 					for (int y=tempi; y<tempi+clusters[i]; y++) {
 						listi.add(new Integer(y));
 					}
-					Collections.shuffle(listz);//shuffle so we can pick unique nodes
+					Collections.shuffle(listz);
 					Collections.shuffle(listi);
-					int kcheck=(int)Math.floor(conclusters[z][i]/clusters[i]);
-					if(kcheck==0){ kcheck=1;}//kcheck is not useful but needed somehow
-					int ycheck=(int)Math.floor(conclusters[z][i]/clusters[z]);
-					if(ycheck==0){ ycheck=1;}//same as kcheck
-					for(int k = 0; k<kcheck;k++){
-					for (int y=0; y<ycheck; y++) {//make the cluster connections node connections
-						node[listi.get(y)] += " " + listz.get((y+k)%clusters[z]);//pick unique number from array list
+					for(int k = 0; k<conclusters[i][z]/clusters[i];k++){
+					for (int y=0; y<conclusters[i][z]/clusters[z]; y++) {
+						node[listi.get(y)] += " " + listz.get((y+k)%clusters[z]);
 						node[listz.get((y+k)%(clusters[z]))] += " "+listi.get(y);
 						counter[listi.get(y)]++;
 						counter[listz.get((y+k)%(clusters[z]))]++;
-						
 					}
-					}
-					tempz+=clusters[z];//temp z is first node cluster z+1
-				
+					tempz+=clusters[z];
+				}
 					listi.clear();
 					listz.clear();
 				}
-				tempz = 0;//reset tempz 
-				tempi+=clusters[i];//tempi is first node cluster i+1
+				tempz = 0;
+				tempi+=clusters[i];
 			}
 		}
 
-		for(int i = 0; i < amNodes;i++){//print adjacency all nodes
+		for(int i = 0; i < amNodes;i++){
 			node[i]=counter[i]+node[i];
 			System.out.println(node[i]);
 		}
-		for(int i = 0; i < amclusters;i++){//make clusters public should be smarter way
+		for(int i = 0; i < amclusters;i++){//make clusters public
 			clustersarray.add(clusters[i]);
 		}
 
 	}
 	
-	public static int getPoisson(double lambda) {//gives random time till next call dependent on average amount of calls per minute
+	public static int getPoisson(double lambda) {
 		  double L = Math.exp(-lambda);
 		  double p = 1.0;
 		  int k = 0;
@@ -277,21 +284,21 @@ public class InputClass {
 		}
 
 
-	void simPeople(){//simulate calls
-		int realtime[] = new int[endday+1];//array the representing the minutes
-		String realorders[] = new String[endday+1];//representing the orders per minute
+	void simPeople(){
+		int realtime[] = new int[endday+1];
+		String realorders[] = new String[endday+1];
 		for(int i=0;i<endday+1;i++){
 			realtime[i]=0;
 			realorders[i]="";
 		}
-		int time;//current time
+		int time;
 		for(int i = 0; i < customerstype.size(); i++){
 			time = customersstart.get(i);
 			while( time < customersend.get(i)){
-				time +=getPoisson(customersdensity.get(i));//move time to next call(time is double now)
-				if(time<endday){//add a caller to the minute
+				time +=getPoisson(customersdensity.get(i));
+				if(time<endday){
 				realtime[Math.round(time)]++;
-				if(customerstype.get(i)==1){//generate the order based on the type of customer
+				if(customerstype.get(i)==1){
 					realorders[Math.round(time)]+=customer1();
 				}
 				if(customerstype.get(i)==2){
@@ -303,58 +310,51 @@ public class InputClass {
 			}
 			}
 		}
-		for(int i=0;i<endday;i++){//print calls
+		for(int i=0;i<endday;i++){
 			System.out.println(realtime[i]+realorders[i]);
 		}
 	}
 	
-	String customer1(){//customer from random node in a cluster to a random node in the same cluster
+	String customer1(){
 		int nodestart=0;
 		int nodeend;
 		String result;
 		int cluster1 = 0;
-		if(amclusters!=1){//if there is more then 1 cluster
+		if(amclusters!=1){
 			cluster1 = rn.nextInt(amclusters-1);
 		}
-		for(int i=0; i < cluster1; i++){//node start is first node of the cluster
+		for(int i=0; i < cluster1; i++){
 			nodestart+=clustersarray.get(i);
 		}
 		nodeend=nodestart;
-		nodeend+=rn.nextInt(clustersarray.get(cluster1-1));//+random amount of nodes in cluster
-		nodestart+=rn.nextInt(clustersarray.get(cluster1-1));
+		nodeend+=rn.nextInt(clustersarray.get(cluster1));
+		nodestart+=rn.nextInt(clustersarray.get(cluster1));
 		result= " "+nodestart+" "+nodeend;
 		return result;
 	}
-	String customer2(){//customer from one to another cluster
+	String customer2(){
 		int nodestart=0;
 		int nodeend=0;
-		int cluster1;
 		int cluster2;
 		String result;
-		if(amclusters==1){// if only 1 cluster
-			cluster1 = 1;
-		}else{
-		cluster1 = rn.nextInt(amclusters)+1;
-		}
+		int cluster1 = rn.nextInt(amclusters-1);
 		cluster2=cluster1;
-		while(cluster2==cluster1 && amclusters != 1){//pick unique second cluster if there is one
-		cluster2 = rn.nextInt(amclusters)+1;
+		while(cluster2!=cluster1){
+		cluster2 = rn.nextInt(amclusters-1);
 		}
-		for(int i=0; i < cluster1-1; i++){//set to first node of the cluster
+		for(int i=0; i < cluster1; i++){
 			nodestart+=clustersarray.get(i);
 		}
-		for(int i=0; i < cluster2-1; i++){
+		for(int i=0; i < cluster2; i++){
 			nodeend+=clustersarray.get(i);
 		}
-		nodeend+=rn.nextInt(clustersarray.get(cluster2-1));
-		nodestart+=rn.nextInt(clustersarray.get(cluster1-1));
+		nodeend+=rn.nextInt(clustersarray.get(cluster2));
+		nodestart+=rn.nextInt(clustersarray.get(cluster1));
 		result= " "+nodestart+" "+nodeend;
 		return result;
 	}
 	String customer3(){
-		String result;
-		result = " "+ rn.nextInt(amNodes-1) +" "+ rn.nextInt(amNodes-1);
-		
+		String result = " "+ rn.nextInt(amclusters-1) +" "+ rn.nextInt(amclusters-1);
 		return result;
 	}
 }

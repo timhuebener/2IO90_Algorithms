@@ -1,12 +1,11 @@
-import java.nio.file.Path;
 
 public class DumbOutput {
 
 	
 	/**
-	 * main method for dumbAlgorithm
+	 * main method for dumbAlgorythm
 	 */
 	public static void main(String[] args){
-		new Algorithm();
+		Algorithm test = new Algorithm();
 	}
 }

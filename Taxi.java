@@ -100,15 +100,29 @@ public class Taxi {
 							.getDist(end);
 					endSpot = path.size();
 				}
-				dist = startChange + endChange;// return change in distance + a weighting factor, the smaller it is, the better the taxi.
+				dist = startChange + endChange;//total added distance
 			}
 		}
-		return dist + weightedPathLength();//return length or change + weighting factor
+		return dist + weightedPathLength(dist);//// return change in distance + a weighting factor, the smaller it is, the better the taxi.
 	}
 	
-	private int weightedPathLength(){
-		return path.size()*4; //temporary
-		//(total distance of path + total wait time of all passengers)*alpha;
+	private int weightedPathLength(int dist){
+		double weight = 0;
+		for(int i = 0; i < occupants.size();i++){
+			weight += (occupants.get(i).getTime());
+		}
+		weight += getPathLength();
+		return (int)(Math.pow(weight,(.5+Math.abs(.5-Algorithm.alpha)))); //use upcoming weight and current total time to weight distance
+	}
+	
+	private int getPathLength(){
+		if(path.size() == 0)
+			return 0;
+		int length = Algorithm.network[node].getDist(path.get(0));
+		for (int i = 0; i < path.size()-1; i++){
+			length += Algorithm.network[path.get(i)].getDist(path.get(i+1));
+		}
+		return length;
 	}
 	public void addToPath(int start, int end, int taxi) {
 		if(endSpot<startSpot)
@@ -177,6 +191,8 @@ public class Taxi {
 	public boolean drop(int taxi) {
 		for (int i = 0; i < occupants.size(); i++) {
 			if (occupants.get(i).getDestination() == node) {
+				Algorithm.times.add(occupants.get(i).getTime());
+				Algorithm.distances.add(occupants.get(i).getDistance());
 				occupants.remove(i);
 				task.remove(0);
 				path.remove(0);
@@ -202,6 +218,12 @@ public class Taxi {
 			return true;
 		}
 		return false;
+	}
+	
+	public void incrementTime(){
+		for(int i = 0; i < occupants.size();i++){
+			occupants.get(i).incrementTime();
+		}
 	}
 
 }

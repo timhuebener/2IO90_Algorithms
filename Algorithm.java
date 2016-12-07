@@ -1,14 +1,18 @@
+import java.util.ArrayList;
+
 //main algorithm class for dumbAlgorythm
 public class Algorithm {
 
 	// all those variables in the beginning
 	TaxiScanner scanner;
 	int linesLeft;
-	float alpha;
+	public static float alpha;
 	int maxTime;
 	Taxi[] taxis;// array containing all taxis
 	int capacity;
 	public static Node[] network;// array of nodes representing the network
+	public static ArrayList<Integer> times;
+	public static ArrayList<Integer> distances;
 	int training;
 	int totalCalls;
 	String line = "";
@@ -16,6 +20,8 @@ public class Algorithm {
 	public Algorithm() {
 		// -----------------------reads input using TaxiScanner
 		// class------------------------
+		times = new ArrayList<Integer>();
+		distances = new ArrayList<Integer>();
 		long time = System.nanoTime();
 		scanner = TaxiScanner.getInstance();
 		linesLeft = Integer.parseInt(scanner.nextLine());
@@ -35,10 +41,12 @@ public class Algorithm {
 				dist[k] = Integer.MAX_VALUE / 10;
 			}
 			dist[i] = 0;
-			int[] neighbors = new int[Integer.parseInt(temp.substring(0, temp.indexOf(" ")))];
+			int[] neighbors = new int[Integer.parseInt(temp.substring(0,
+					temp.indexOf(" ")))];
 			temp = temp.substring(temp.indexOf(" ") + 1);
 			for (int j = 0; temp.length() > 0; j++) {
-				int node = Integer.parseInt(temp.substring(0, temp.indexOf(" ")));// ----------
+				int node = Integer
+						.parseInt(temp.substring(0, temp.indexOf(" ")));// ----------
 				dist[node] = 1;
 				neighbors[j] = node;
 
@@ -60,7 +68,8 @@ public class Algorithm {
 		for (int i = 0; i < network.length; i++) {
 			for (int j = 0; j < taxis.length; j++) {
 				if (placeTaxis[j] == -1
-						|| network[i].getNeighbors().length > network[placeTaxis[j]].getNeighbors().length) {
+						|| network[i].getNeighbors().length > network[placeTaxis[j]]
+								.getNeighbors().length) {
 					placeTaxis = bubbleDown(placeTaxis, j, i);
 					break;
 				}
@@ -86,8 +95,9 @@ public class Algorithm {
 		// ------------------------------------------------------------------------------
 		// main loop, every loop represents a minute
 		while (!done()) {
-			
-			//increment total time waited for all passangers
+
+			// increment total time waited for all passangers
+			incrementTime();
 
 			if (totalCalls > 0) {// add passengers to nodes
 				totalCalls--;
@@ -100,26 +110,29 @@ public class Algorithm {
 					// this is a rough one, add a passenger to the node equal to
 					// the fist number with a destination equal to the second
 					// number
-					int node = Integer.parseInt(temp.substring(0, temp.indexOf(" ")));
+					int node = Integer.parseInt(temp.substring(0,
+							temp.indexOf(" ")));
 					temp = temp.substring(temp.indexOf(" ") + 1);
-					int dest = Integer.parseInt(temp.substring(0, temp.indexOf(" ")));
+					int dest = Integer.parseInt(temp.substring(0,
+							temp.indexOf(" ")));
 					temp = temp.substring(temp.indexOf(" ") + 1);
 					// find best taxi
-					network[node].addPassenger(new Passenger(dest, addToBestTaxi(node, dest)));// add
-																								// passanger
-																								// to
-																								// the
-																								// node
-																								// with
-																								// its
-																								// destination
-																								// and
-																								// which
-																								// taxi
-																								// will
-																								// pick
-																								// it
-																								// up
+					network[node].addPassenger(new Passenger(node,dest,
+							addToBestTaxi(node, dest)));// add
+														// passanger
+														// to
+														// the
+														// node
+														// with
+														// its
+														// destination
+														// and
+														// which
+														// taxi
+														// will
+														// pick
+														// it
+														// up
 
 				}
 			}
@@ -130,11 +143,14 @@ public class Algorithm {
 					while (taxis[i].atDest() != -2) {
 						if (taxis[i].atDest() == -1) {// drop off
 							taxis[i].drop(i);
-							line = line + "d " + (i + 1) + " " + taxis[i].getNode() + " ";
+							line = line + "d " + (i + 1) + " "
+									+ taxis[i].getNode() + " ";
 						} else {// pick up
-							Passenger p = network[taxis[i].getNode()].remove(i, taxis[i].atDest());
+							Passenger p = network[taxis[i].getNode()].remove(i,
+									taxis[i].atDest());
 							taxis[i].pickUp(p, i);
-							line = line + "p " + (i + 1) + " " + p.getDestination() + " ";
+							line = line + "p " + (i + 1) + " "
+									+ p.getDestination() + " ";
 						}
 					}
 				} else {// not at a destination
@@ -157,10 +173,26 @@ public class Algorithm {
 			scanner.println(line + "c");// end minute
 			line = "";
 		}
-		//System.out.println(((double)(System.nanoTime()-time)/1000000000.0) + " ");
-		//print efficiency calc.
+		// System.out.println(((double)(System.nanoTime()-time)/1000000000.0) +
+		// " ");
+		efficiency();
 	}
 
+	private void efficiency(){
+		double efficiency = 0;
+		for(int i = 0; i < times.size();i++){
+			efficiency += Math.pow((times.get(i)/Math.pow((distances.get(i) + 2),alpha)),2);
+		}
+		System.out.println("The efficiency is : " + efficiency);
+	}
+	private void incrementTime(){
+		for(int i = 0; i < taxis.length;i++){
+			taxis[i].incrementTime();
+		}
+		for(int i = 0; i < network.length;i++){
+			network[i].incrementTime();
+		}
+	}
 	private boolean done() {// done when no more lines in input, no more
 							// passengers in nodes or taxies
 		return (!scanner.hasNextLine() && nodesEmpty() && taxisEmpty());
@@ -196,9 +228,14 @@ public class Algorithm {
 				for (int j = i; j < network.length; j++) {
 					// If vertex k is on the shortest path from
 					// i to j, then update the value of dist[i][j]
-					if (network[i].getDist(k) + network[k].getDist(j) < network[i].getDist(j)) {
-						network[i].setDist(network[i].getDist(k) + network[k].getDist(j), j);
-						network[j].setDist(network[i].getDist(k) + network[k].getDist(j), i);
+					if (network[i].getDist(k) + network[k].getDist(j) < network[i]
+							.getDist(j)) {
+						network[i].setDist(
+								network[i].getDist(k) + network[k].getDist(j),
+								j);
+						network[j].setDist(
+								network[i].getDist(k) + network[k].getDist(j),
+								i);
 					}
 				}
 			}

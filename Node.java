@@ -55,5 +55,11 @@ public class Node {
 			return true;
 		return false;
 	}
+	
+	public void incrementTime(){
+		for(int i = 0; i < passengers.size();i++){
+			passengers.get(i).incrementTime();
+		}
+	}
 
 }

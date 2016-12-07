@@ -52,7 +52,7 @@ public class Taxi {
 		} else {// find best spot to put it
 			startSpot = 0;
 			endSpot = 0;
-			if (path.size() == 0)
+			if (path.size() == 0)//to avoid null pointer issue in case of empty path
 				dist = (Algorithm.network[node].getDist(start)
 						+ Algorithm.network[start].getDist(end))/2;
 			else {
@@ -68,36 +68,39 @@ public class Taxi {
 						startSpot = i;
 					}
 				}
+				/*
+				 * currently doesn't work, checks if putting start at the end is at all efficient
+				 */
 				// if(2*Algorithm.network[path.get(path.size()-1)].getDist(start)
 				// < startChange){
 				// startChange =
 				// 2*Algorithm.network[path.get(path.size()-1)].getDist(start);
 				// startSpot = path.size();
 				// }
-				int endChange = Algorithm.network[start].getDist(end)
+				int endChange = Algorithm.network[start].getDist(end)// default position is right after the start
 						+ Algorithm.network[end].getDist(path
 								.get(startSpot)) - Algorithm.network[start].getDist(path
 										.get(startSpot));
 				endSpot = startSpot;
-				boolean temp = true;
+				boolean endLimit = true;
 				for (int i = startSpot + 1; i < path.size() - 1; i++) {//put end destination after start destination being careful not to let the taxi go over capacity in between
 					if(checkFull(i-1)>capacity-1){
-						temp = false;
+						endLimit = false;
 						break;
 					}else if (Algorithm.network[start].getDist(end)
-							+ Algorithm.network[end].getDist(path.get(i))- Algorithm.network[start].getDist(path.get(i)) <= endChange && !(checkFull(i-1)+1>capacity)) {
+							+ Algorithm.network[end].getDist(path.get(i))- Algorithm.network[start].getDist(path.get(i)) <= endChange) {
 						endChange = Algorithm.network[path.get(i - 1)]
 								.getDist(end)
 								+ Algorithm.network[end].getDist(path.get(i)) - - Algorithm.network[path.get(i - 1)].getDist(path.get(i));
 						endSpot = i;
 					}
 				}
-				if (temp && Algorithm.network[start].getDist(end) < endChange && !(checkFull(path.size()-1)>=capacity-1)) {
+				if (endLimit && Algorithm.network[start].getDist(end) < endChange) {
 					endChange = Algorithm.network[path.get(path.size() - 1)]
 							.getDist(end);
 					endSpot = path.size();
 				}
-				dist = startChange + endChange;
+				dist = startChange + endChange;// return change in distance + a weighting factor, the smaller it is, the better the taxi.
 			}
 		}
 		return dist + weightedPathLength();//return length or change + weighting factor
@@ -105,6 +108,7 @@ public class Taxi {
 	
 	private int weightedPathLength(){
 		return path.size()*4; //temporary
+		//(total distance of path + total wait time of all passengers)*alpha;
 	}
 	public void addToPath(int start, int end, int taxi) {
 		if(endSpot<startSpot)

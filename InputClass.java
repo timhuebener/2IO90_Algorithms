@@ -31,9 +31,10 @@ public class InputClass {
 	float link;
 	int training;
 	int endday = 0;
-	int type;
+	int type = -1;
 	int start;
 	int end;
+	Boolean randomtimes;
 	double density;
 	//arrays for incoming calls
 	ArrayList<Integer> customerstype = new ArrayList<Integer>();
@@ -47,7 +48,7 @@ public class InputClass {
 
 	public static void main(String[] args){//take input
 		InputClass temp = new InputClass();
-	    System.out.println("Alpha, double between 0 and 1"); 
+		System.out.println("Alpha, double between 0 and 1"); 
 		temp.alpha = scanner.nextFloat();
 		System.out.println("Maximum time allowed for one person, int larger than 0"); 
 		temp.maxTime = scanner.nextInt();
@@ -66,13 +67,13 @@ public class InputClass {
 		System.out.println("strength link connected clusters , double between 0 and 1"); 
 		temp.link = scanner.nextFloat();
 		System.out.println("generate customers:type, start time(int>=0), end time(int>0), average(bouble>0)");
-		System.out.println("1 = close customers");
-		System.out.println("2 = far customers");
-		System.out.println("3 = random customers");
-		System.out.println("4 = end day");
-		while(temp.type != 4){//loop for customers
+		System.out.println("type 1 = close customers people who want to a location in the same cluster");
+		System.out.println("2 = far customers people who want to go to another cluster");
+		System.out.println("3 = random customers customers that want to go to a fully random node");
+		System.out.println("0 = end day");
+		while(temp.type != 0){//loop for customers
 			temp.type = scanner.nextInt();
-			if(temp.type!=4){
+			if(temp.type!=0){
 			temp.start = scanner.nextInt();
 			temp.end = scanner.nextInt();
 			temp.density = 1/(scanner.nextDouble());
@@ -85,7 +86,8 @@ public class InputClass {
 			temp.customersdensity.add(temp.density);
 			}
 		}
-		
+		System.out.println("True means time is random"); 
+		temp.randomtimes = scanner.nextBoolean();
 		System.out.println("End training periode, int larger than 0");
 		temp.training = scanner.nextInt();
 
@@ -264,10 +266,11 @@ public class InputClass {
 	}
 	
 	public static int getPoisson(double lambda) {//gives random time till next call dependent on average amount of calls per minute
-		  double L = Math.exp(-lambda);
+		
+		int k = 0;
+		double L = Math.exp(-lambda);
 		  double p = 1.0;
-		  int k = 0;
-
+		  
 		  do {
 		    k++;
 		    p *= Math.random();
@@ -288,7 +291,8 @@ public class InputClass {
 		for(int i = 0; i < customerstype.size(); i++){
 			time = customersstart.get(i);
 			while( time < customersend.get(i)){
-				time +=getPoisson(customersdensity.get(i));//move time to next call(time is double now)
+				if(randomtimes){
+				time +=getPoisson(customersdensity.get(i));
 				if(time<endday){//add a caller to the minute
 				realtime[Math.round(time)]++;
 				if(customerstype.get(i)==1){//generate the order based on the type of customer
@@ -300,7 +304,30 @@ public class InputClass {
 				if(customerstype.get(i)==3){
 					realorders[Math.round(time)]+=customer3();
 				}
-			}
+				}
+				}else{
+					for(int z = 0; z<1/customersdensity.get(i);z++){
+				
+					if(time<endday){//add a caller to the minute
+						realtime[Math.round(time)]++;
+						if(customerstype.get(i)==1){//generate the order based on the type of customer
+							realorders[Math.round(time)]+=customer1();
+						}
+						if(customerstype.get(i)==2){
+							realorders[Math.round(time)]+=customer2();
+						}
+						if(customerstype.get(i)==3){
+							realorders[Math.round(time)]+=customer3();
+						}
+						if(customersdensity.get(i)>1){
+							time+=Math.round(1/customersdensity.get(i))-1;
+						}
+					}
+					}
+					time++;
+				}
+				
+			
 			}
 		}
 		for(int i=0;i<endday;i++){//print calls

@@ -86,7 +86,7 @@ public class InputClass {
 			temp.customersdensity.add(temp.density);
 			}
 		}
-		System.out.println("True means time is random"); 
+		System.out.println("boolean true means customers call at random times, false customers call exactly as much every minute"); 
 		temp.randomtimes = scanner.nextBoolean();
 		System.out.println("End training periode, int larger than 0");
 		temp.training = scanner.nextInt();

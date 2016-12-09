@@ -3,13 +3,16 @@
 public class Passenger {
 	private int destination,taxi, time, distance;
 
-	public Passenger(int node, int dest, int taxi) {
+	public Passenger(int node, int dest) {
 		destination = dest;
-		this.taxi = taxi;
+		this.taxi = -1;
 		time = 0;
 		distance = Algorithm.network[node].getDist(dest);
 	}
 
+	public void setTaxi(int taxi){
+		this.taxi = taxi;
+	}
 	public int getDestination() {
 		return destination;
 	}

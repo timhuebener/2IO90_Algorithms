@@ -117,8 +117,9 @@ public class Algorithm {
 							temp.indexOf(" ")));
 					temp = temp.substring(temp.indexOf(" ") + 1);
 					// find best taxi
-					network[node].addPassenger(new Passenger(node,dest,
-							addToBestTaxi(node, dest)));// add
+					Passenger p = new Passenger(node,dest);
+					p.setTaxi(addToBestTaxi(p,node, dest, network[node].getDist(dest)));
+					network[node].addPassenger(p);// add
 														// passanger
 														// to
 														// the
@@ -253,16 +254,17 @@ public class Algorithm {
 
 	// check each taxi to find which taxi has the shortest weighted change in
 	// path if the new nodes where to be added
-	private int addToBestTaxi(int start, int end) {
+	private int addToBestTaxi(Passenger p,int start, int end, int dist) {
 		int bestTaxi = -1;
 		int bestTime = Integer.MAX_VALUE;
 		for (int i = 0; i < taxis.length; i++) {
-			if (taxis[i].testPathChange(start, end) < bestTime) {// check taxi
+			int temp = taxis[i].testPathChange(start, end, dist);
+			if (temp < bestTime) {// check taxi
 				bestTaxi = i;
-				bestTime = taxis[i].testPathChange(start, end);
+				bestTime = temp;
 			}
 		}
-		taxis[bestTaxi].addToPath(start, end, bestTaxi + 1);// add pick up point
+		taxis[bestTaxi].addToPath(start, p, bestTaxi + 1);// add pick up point
 															// and drop off
 															// point to theb est
 															// taxi's path

@@ -4,22 +4,22 @@ import java.util.ArrayList;
 public class Taxi {
 	private int node, endSpot, startSpot, end;
 	private int capacity;
-	private ArrayList<Integer> path, task;
-	private ArrayList<Passenger> occupants;
+	private ArrayList<Integer> path;
+	private ArrayList<Passenger> occupants,task;
 
 	public Taxi(int startingNode, int capacity) {
 		node = startingNode;
 		this.capacity = capacity;
 		occupants = new ArrayList<Passenger>();
 		path = new ArrayList<Integer>();
-		task = new ArrayList<Integer>();
+		task = new ArrayList<Passenger>();
 	}
 
 	private int checkFull(int i){
 		int c = occupants.size();
 		int max = Integer.MIN_VALUE;
 		for(int j = 0; j <= i; j++){
-			if(task.get(i) > -1)
+			if(task.get(i) != null)
 				c+=1;
 			else
 				c+=-1;
@@ -34,10 +34,10 @@ public class Taxi {
 	 * @param end drop off node for new passenger
 	 * @return
 	 */
-	public int testPathChange(int start, int end) {
+	public int testPathChange(int start, int end, int distance) {
 		int dist;
 		this.end = end;
-		if (occupants.size() == capacity) {//to simplify, if taxi is currently full add to end of path
+		if (occupants.size()==capacity || capacity == 1) {//to simplify, if taxi is currently full add to end of path
 			startSpot = 0;
 			endSpot = 0;
 			if (path.size() == 0)
@@ -103,34 +103,66 @@ public class Taxi {
 				dist = startChange + endChange;//total added distance
 			}
 		}
-		return dist + weightedPathLength(dist);//// return change in distance + a weighting factor, the smaller it is, the better the taxi.
+		return (int)Math.pow((dist + getPathLength(-1,startSpot-1))/Math.pow(distance+2,Algorithm.alpha),2) + changedEf(start, end);// return change in distance + a weighting factor, the smaller it is, the better the taxi.
 	}
 	
-	private int weightedPathLength(int dist){
-		double weight = 0;
-		for(int i = 0; i < occupants.size();i++){
-			weight += (occupants.get(i).getTime());
+	private int changedEf(int start, int end){
+		int nEfficiency = 0;
+		for(int i = 0; i < path.size();i++){
+			int cDist = 0;
+			int nDist = 0;
+			if(task.get(i)!=null){
+				int temp = -1;
+				for(int k = i+1; k < path.size(); k++){
+					if(path.get(k)==task.get(i).getDestination()&&task.get(k)==null)
+						temp = k;
+				}
+				cDist = task.get(i).getTime()+getPathLength(-1,temp)+temp-1;
+				nDist = cDist;
+				if(i+1> endSpot)
+					cDist+=2;
+				for(int j = i+1; j < path.size() && j <= endSpot; j++){
+					if(j==temp && j < startSpot){
+						break;
+					}else if(j == startSpot && j == endSpot){
+						cDist += Algorithm.network[path.get(j-1)].getDist(start)+Algorithm.network[start].getDist(end)+Algorithm.network[end].getDist(path.get(j))-Algorithm.network[path.get(j-1)].getDist(path.get(j))+2;
+						break;
+					}else if(j==startSpot){
+						cDist += Algorithm.network[path.get(j-1)].getDist(start)+Algorithm.network[start].getDist(path.get(j))-Algorithm.network[path.get(j-1)].getDist(path.get(j))+1;
+					}else if(j==endSpot){
+						cDist += Algorithm.network[path.get(j-1)].getDist(end)+Algorithm.network[end].getDist(path.get(j))-Algorithm.network[path.get(j-1)].getDist(path.get(j))+1;
+						break;
+					}else if(j==temp && j < endSpot){
+						break;
+					}
+				}
+				nEfficiency += Math.pow(cDist/Math.pow(Algorithm.network[path.get(i)].getDist(task.get(i).getDestination())+2,Algorithm.alpha), 2) - Math.pow(nDist/Math.pow(Algorithm.network[path.get(i)].getDist(task.get(i).getDestination())+2,Algorithm.alpha), 2);
+			}
 		}
-		weight += getPathLength();
-		return (int)(Math.pow(weight,(.5+Math.abs(.5-Algorithm.alpha)))); //use upcoming weight and current total time to weight distance
+		return nEfficiency;
 	}
 	
-	private int getPathLength(){
+	private int getPathLength(int start, int end){
 		if(path.size() == 0)
 			return 0;
-		int length = Algorithm.network[node].getDist(path.get(0));
-		for (int i = 0; i < path.size()-1; i++){
+		int length = 0;
+		if(start == -1){
+			 length = Algorithm.network[node].getDist(path.get(0));
+			 start++;
+		}
+		for (int i = start; i < end; i++){
 			length += Algorithm.network[path.get(i)].getDist(path.get(i+1));
 		}
 		return length;
 	}
-	public void addToPath(int start, int end, int taxi) {
+	
+	public void addToPath(int start, Passenger p, int taxi) {
 		if(endSpot<startSpot)
 			System.out.print("path error");
 		path.add(endSpot, end);
-		task.add(endSpot, -1);
+		task.add(endSpot, null);
 		path.add(startSpot, start);
-		task.add(startSpot, end);
+		task.add(startSpot, p);
 //		System.out.print("taxi "+ taxi + ": ");
 //		for(int i = 0; i < path.size();i++){
 //			System.out.print(path.get(i) + ", ");
@@ -156,7 +188,9 @@ public class Taxi {
 
 	public int atDest() {
 		if (path.size()>0 && node == path.get(0)) {
-			return task.get(0);
+			if(task.get(0) == null)
+				return -1;
+			return task.get(0).getDestination();
 		}
 		return -2;
 	}

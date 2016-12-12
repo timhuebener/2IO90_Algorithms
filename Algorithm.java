@@ -179,7 +179,7 @@ public class Algorithm {
 		}
 		// System.out.println(((double)(System.nanoTime()-time)/1000000000.0) +
 		// " ");
-		//efficiency();
+		efficiency();
 	}
 
 	private void efficiency(){
@@ -254,6 +254,12 @@ public class Algorithm {
 				//if we have no distance from the root to the neighbour(if distance is infinity)
 				network[root].setDist(network[root].getDist(node)+1, network[node].getNeighbors()[i]);
 				//distance root to neigbour is distance current node + 1
+			}
+		}
+		for(int i=0; i<network[node].getNeighbors().length;i++){
+			//for all neighbours
+			if( network[root].getDist(network[node].getNeighbors()[i]) == network[root].getDist(node)+1){
+				//if we have found a distance to the node fromnode(if distance is infinity)
 				bfs(root,network[node].getNeighbors()[i]);
 				//call bfs again from current node
 			}

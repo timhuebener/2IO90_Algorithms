@@ -1,17 +1,35 @@
 //keeps track of the passenger, currently just its destination
 //later also time spent and such.
 public class Passenger {
-	private int destination;
-	private int position;
+	private int destination,taxi, time, distance;
 
-	public Passenger(int dest, int pos){
+	public Passenger(int node, int dest) {
 		destination = dest;
-		position = pos;
+		this.taxi = -1;
+		time = 0;
+		distance = Algorithm.network[node].getDist(dest);
 	}
-	
-	public int getDestination(){
+
+	public void setTaxi(int taxi){
+		this.taxi = taxi;
+	}
+	public int getDestination() {
 		return destination;
 	}
-
-	public int getPosition(){ return position;}
+	
+	public int getTaxi(){
+		return taxi;
+	}
+	
+	public void incrementTime(){
+		time++;
+	}
+	
+	public int getTime(){
+		return time;
+	}
+	
+	public int getDistance(){
+		return distance;
+	}
 }

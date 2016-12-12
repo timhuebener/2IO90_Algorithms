@@ -23,6 +23,18 @@ public class Node {
 	public int getDist(int index){
 		return dist[index];
 	}
+	public int getNext(int dest){
+		for(int i = 0; i < neighbors.length; i++){
+			if(Algorithm.network[neighbors[i]].getDist(dest) == getDist(dest)-1){
+				return neighbors[i];
+			}
+		}
+		return -1;
+	}
+	
+	public int[] getNeighbors(){
+		return neighbors;
+	}
 	public int randomNeighbor(){
 		int temp = (int)(Math.random()*neighbors.length);
 		//System.out.print(neighbors.length);
@@ -30,14 +42,24 @@ public class Node {
 	}
 	
 	//removes the passenger who has waited the longest and returns them
-	public Passenger remove(){
-		return passengers.remove(0);
+	public Passenger remove(int taxi, int dest){
+		for(int i = 0; i < passengers.size();i++){
+			if(passengers.get(i).getTaxi() == taxi && passengers.get(i).getDestination() == dest)
+				return passengers.remove(i);
+		}
+		return null;
 	}
 	
 	public boolean empty(){
 		if(passengers.size() == 0)
 			return true;
 		return false;
+	}
+	
+	public void incrementTime(){
+		for(int i = 0; i < passengers.size();i++){
+			passengers.get(i).incrementTime();
+		}
 	}
 
 }

@@ -47,7 +47,7 @@ public class Algorithm {
 			for (int j = 0; temp.length() > 0; j++) {
 				int node = Integer
 						.parseInt(temp.substring(0, temp.indexOf(" ")));// ----------
-				dist[node] = 1;
+				dist[node] = Integer.MAX_VALUE / 10;
 				neighbors[j] = node;
 
 				temp = temp.substring(temp.indexOf(" ") + 1);
@@ -247,11 +247,15 @@ public class Algorithm {
 	}
 	
 	private void bfs(int root,int node){
-		int[] neighbours = network[node].getNeighbors();
-		for(int i=0; i<neighbours.length;i++){
-			if( network[root].getDist(neighbours[i]) != Integer.MAX_VALUE / 10){
-				network[root].setDist(network[root].getDist(node)+1, neighbours[i]);
-				bfs(root,neighbours[i]);
+		//root is first node 
+		for(int i=0; i<network[node].getNeighbors().length;i++){
+			//for all neighbours
+			if( network[root].getDist(network[node].getNeighbors()[i]) == Integer.MAX_VALUE / 10){
+				//if we have no distance from the root to the neighbour(if distance is infinity)
+				network[root].setDist(network[root].getDist(node)+1, network[node].getNeighbors()[i]);
+				//distance root to neigbour is distance current node + 1
+				bfs(root,network[node].getNeighbors()[i]);
+				//call bfs again from current node
 			}
 		}
 	}

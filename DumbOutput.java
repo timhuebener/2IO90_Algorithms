@@ -1,7 +1,7 @@
 
 public class DumbOutput {
 
-	
+
 	/**
 	 * main method for dumbAlgorythm
 	 */

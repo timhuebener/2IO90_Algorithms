@@ -4,22 +4,22 @@ import java.util.ArrayList;
 public class Node {
 	private int[] neighbors, dist;
 	private ArrayList<Passenger> passengers;
-	
+
 	public Node(int[] neighbors, int[] dist){
 		this.neighbors = neighbors;
 		passengers = new ArrayList<Passenger>();
 		this.dist = dist;
 
 	}
-	
+
 	public void addPassenger(Passenger noobie){
 		passengers.add(noobie);
 	}
-	
+
 	public void setDist(int dist, int index){
 		this.dist[index] = dist;
 	}
-	
+
 	public int getDist(int index){
 		return dist[index];
 	}
@@ -31,12 +31,16 @@ public class Node {
 		}
 		return -1;
 	}
+
+	public int[] getNeighbors(){
+		return neighbors;
+	}
 	public int randomNeighbor(){
 		int temp = (int)(Math.random()*neighbors.length);
 		//System.out.print(neighbors.length);
 		return neighbors[temp];
 	}
-	
+
 	//removes the passenger who has waited the longest and returns them
 	public Passenger remove(int taxi, int dest){
 		for(int i = 0; i < passengers.size();i++){
@@ -45,11 +49,17 @@ public class Node {
 		}
 		return null;
 	}
-	
+
 	public boolean empty(){
 		if(passengers.size() == 0)
 			return true;
 		return false;
+	}
+
+	public void incrementTime(){
+		for(int i = 0; i < passengers.size();i++){
+			passengers.get(i).incrementTime();
+		}
 	}
 
 }

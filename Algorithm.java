@@ -96,7 +96,7 @@ public class Algorithm {
 		scanner.println(line + "c");
 		line = "";
 
-		trainingNodes = new int[network.length];
+		/*trainingNodes = new int[network.length];
 		while(training > 0){
 			training--;
 			totalCalls--;
@@ -120,7 +120,7 @@ public class Algorithm {
 			trainingNodes[i]+=0.25*network[i].getNeighbors().length;
 		}
 
-		System.out.println(trainingNodes);
+		System.out.println(trainingNodes);*/
 		// ------------------------------------------------------------------------------
 		// main loop, every loop represents a minute
 		while (!done()) {

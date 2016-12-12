@@ -86,20 +86,11 @@ public class InputClass {
 		
 		System.out.println("End training periode, int larger than 0");
 		temp.training = scanner.nextInt();
-		
-		
-		
-
-
-
-
-
-
 
 
 
 		try {
-			System.setOut(new PrintStream(new BufferedOutputStream(new FileOutputStream("C:\\Users\\s157937\\Documents\\Jaar_2_Sofware_sience\\q2\\algorithms\\input.txt")), true));
+			System.setOut(new PrintStream(new BufferedOutputStream(new FileOutputStream("C:\\Users\\s157937\\Desktop\\InputGenerator.txt")), true));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -13,6 +13,7 @@ public class Algorithm {
 	public static Node[] network;// array of nodes representing the network
 	public static ArrayList<Integer> times;
 	public static ArrayList<Integer> distances;
+    public int[] trainingNodes;
 	int training;
 	int totalCalls;
 	String line = "";
@@ -27,6 +28,7 @@ public class Algorithm {
 		linesLeft = Integer.parseInt(scanner.nextLine());
 		alpha = Float.parseFloat(scanner.nextLine());
 		maxTime = Integer.parseInt(scanner.nextLine());
+        trainingNodes = new int[network.length];
 		String temp = scanner.nextLine();
 		// substring includes character at index 0 but not at index 1 so this
 		// would be the first character in the string
@@ -59,6 +61,8 @@ public class Algorithm {
 		temp = scanner.nextLine();
 		training = Integer.parseInt(temp.substring(0, temp.indexOf(" ")));
 		totalCalls = Integer.parseInt(temp.substring(temp.indexOf(" ") + 1));
+        
+        
 		// set starting points for taxis in this case, all node 0
 		int[] placeTaxis = new int[taxis.length];
 		for (int i = 0; i < placeTaxis.length; i++) {
@@ -92,6 +96,31 @@ public class Algorithm {
 		}
 		scanner.println(line + "c");
 		line = "";
+        
+        while(training > 0){
+            training--;
+            totalCalls--;
+            temp = scanner.nextLine() + " ";
+            temp = temp.substring(temp.indexOf(" ") + 1);
+            while (temp.length() > 0) {
+                int node = Integer.parseInt(temp.substring(0,
+                                                           temp.indexOf(" ")));
+                trainingNodes[node]+=0.75;
+                temp = temp.substring(temp.indexOf(" ") + 1);
+                int dest = Integer.parseInt(temp.substring(0,
+                                                           temp.indexOf(" ")));
+                temp = temp.substring(temp.indexOf(" ") + 1);
+
+                //Passenger p = new Passenger(node,dest);
+                //p.setTaxi(addToBestTaxi(p,node, dest, network[node].getDist(dest)));
+                //network[node].addPassenger(p);
+                
+                
+            }
+        }
+        for(int i = 0; i < trainingNodes.length; i++){
+            trainingNodes[i]+=0.25*network[i].neighbors.length;
+        }
 		// ------------------------------------------------------------------------------
 		// main loop, every loop represents a minute
 		while (!done()) {

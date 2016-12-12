@@ -119,7 +119,7 @@ public class Algorithm {
             }
         }
         for(int i = 0; i < trainingNodes.length; i++){
-            trainingNodes[i]+=0.25*network[i].neighbors.length;
+            trainingNodes[i]+=0.25*network[i].getNeighbors().length;
         }
 		// ------------------------------------------------------------------------------
 		// main loop, every loop represents a minute

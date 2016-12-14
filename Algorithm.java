@@ -129,10 +129,10 @@ public class Algorithm {
             placeTaxis2[i] = -1;
         }
         // place taxis here
-        for (int i = 0; i < network.length; i++) {
+        for (int i = 0; i < trainingNodes.length; i++) {
             for (int j = 0; j < taxis.length; j++) {
                 if (placeTaxis2[j] == -1
-                    || placeTaxis2[i] >= network[placeTaxis2[j]]) {
+                    || placeTaxis2[i] >= trainingNodes[placeTaxis2[j]]) {
                     placeTaxis2 = bubbleDown(placeTaxis2, j, i);
                     break;
                 }
@@ -281,29 +281,6 @@ public class Algorithm {
 		return true;
 	}
 
-	private void floydWarshall() {
-
-		for (int k = 0; k < network.length; k++) {
-			// Pick all vertices as source one by one
-			for (int i = 0; i < network.length; i++) {
-				// Pick all vertices as destination for the
-				// above picked source
-				for (int j = i; j < network.length; j++) {
-					// If vertex k is on the shortest path from
-					// i to j, then update the value of dist[i][j]
-					if (network[i].getDist(k) + network[k].getDist(j) < network[i]
-							.getDist(j)) {
-						network[i].setDist(
-								network[i].getDist(k) + network[k].getDist(j),
-								j);
-						network[j].setDist(
-								network[i].getDist(k) + network[k].getDist(j),
-								i);
-					}
-				}
-			}
-		}
-	}
 	
 	private void bfs(int root,int node){
 		//root is first node 
@@ -325,14 +302,6 @@ public class Algorithm {
 		}
 	}
 
-	private void printFloyd() {
-		for (int i = 0; i < network.length; i++) {
-			for (int j = 0; j < network.length; j++) {
-				System.out.print(network[i].getDist(j) + " ");
-			}
-			System.out.println();
-		}
-	}
 
 	// check each taxi to find which taxi has the shortest weighted change in
 	// path if the new nodes where to be added

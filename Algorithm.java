@@ -13,6 +13,7 @@ public class Algorithm {
 	public static Node[] network;// array of nodes representing the network
 	public static ArrayList<Integer> times;
 	public static ArrayList<Integer> distances;
+    public double[] trainingNodes;
 	int training;
 	int totalCalls;
 	String line = "";
@@ -95,7 +96,65 @@ public class Algorithm {
 		}
 		scanner.println(line + "c");
 		line = "";
-		// ------------------------------------------------------------------------------
+        trainingNodes = new double[network.length];
+        
+        while(training > 0){
+            training--;
+            totalCalls--;
+            temp = scanner.nextLine() + " ";
+            temp = temp.substring(temp.indexOf(" ") + 1);
+            while (temp.length() > 0) {
+                int node = Integer.parseInt(temp.substring(0,
+                                                           temp.indexOf(" ")));
+                trainingNodes[node]+=0.75;
+                temp = temp.substring(temp.indexOf(" ") + 1);
+                int dest = Integer.parseInt(temp.substring(0,
+                                                           temp.indexOf(" ")));
+                temp = temp.substring(temp.indexOf(" ") + 1);
+                
+                //Passenger p = new Passenger(node,dest);
+                //p.setTaxi(addToBestTaxi(p,node, dest, network[node].getDist(dest)));
+                //network[node].addPassenger(p);
+                
+                
+            }
+            scanner.println("c");
+        }
+        for(int i = 0; i < trainingNodes.length; i++){
+            trainingNodes[i]+=0.25*network[i].getNeighbors().length;
+        }
+        
+        int[] placeTaxis2 = new int[taxis.length];
+        for (int i = 0; i < placeTaxis2.length; i++) {
+            placeTaxis2[i] = -1;
+        }
+        // place taxis here
+        for (int i = 0; i < network.length; i++) {
+            for (int j = 0; j < taxis.length; j++) {
+                if (placeTaxis2[j] == -1
+                    || placeTaxis2[i] >= network[placeTaxis2[j]]) {
+                    placeTaxis2 = bubbleDown(placeTaxis2, j, i);
+                    break;
+                }
+            }
+        }
+        /*
+         * for(int i = 0; i < placeTaxis.length;i++){
+         * System.out.print(placeTaxis[i]); }
+         */
+        
+        // set starting points for taxis in this case, all node 0
+        for (int i = 0; i < taxis.length; i++) {
+            if (placeTaxis2[i] == -1) {
+                taxis[i] = new Taxi(placeTaxis2[0], capacity);
+                line = line + "m " + (i + 1) + " " + placeTaxis2[0] + " ";
+            } else {
+                taxis[i] = new Taxi(placeTaxis2[i], capacity);
+                line = line + "m " + (i + 1) + " " + placeTaxis2[i] + " ";
+            }
+        }
+        
+        // ------------------------------------------------------------------------------
 		// main loop, every loop represents a minute
 		while (!done()) {
 

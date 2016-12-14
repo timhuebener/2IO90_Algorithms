@@ -19,11 +19,11 @@ public class Taxi {
 		int c = occupants.size();
 		int max = Integer.MIN_VALUE;
 		for (int j = 0; j <= i; j++) {
-			if (task.get(i) != null)
-				c += 1;
-			else
-				c += -1;
-			if (c > max)
+			if (task.get(j) != null){
+				c ++;
+			}else{
+				c --;
+			}if (c > max)
 				max = c;
 		}
 		return c;
@@ -41,8 +41,7 @@ public class Taxi {
 	private int findDistance(int start, int end, int i, int j){
 		int distance = 0;
 		if(path.size()==0){
-			return (int) Math.pow((Algorithm.Network[node].getDist(start)+Algorithm.Network[start].getDist(end) + getPathLength(-1, startSpot - 1) + endSpot + 1)
-					/ Math.pow(distance + 2, Algorithm.alpha), 2);
+			return Algorithm.Network[node].getDist(start)+Algorithm.Network[start].getDist(end);
 		}if(i == 0 && j == 0){
 			return (Algorithm.Network[node].getDist(start) + Algorithm.Network[start]
 					.getDist(end)) + Algorithm.Network[end]
@@ -73,13 +72,13 @@ public class Taxi {
 		this.end = end;
 		startSpot = path.size();
 		endSpot = path.size();
-		int change = changedEf(start, end, findDistance(start, end, startSpot, endSpot), distance);
+		int change = Integer.MAX_VALUE;
 		for(int i = 0; i <= path.size();i++){
-			if(checkFull(i-1)<=capacity){
+			if(checkFull(i-1)<capacity){
 				for(int j = i; j <= path.size();j++){
-					if(checkFull(j-1)+1 <= capacity){
-						int tempChange = changedEf(start, end, findDistance(start, end, i, j), distance);
-						if(tempChange < change ){
+					if(checkFull(j-1) < capacity){
+						int tempChange = changedEf(i, j, start, end, findDistance(start, end, i, j), distance);
+						if(tempChange <= change ){
 							change = tempChange;
 							startSpot = i;
 							endSpot = j;
@@ -93,7 +92,7 @@ public class Taxi {
 		return change;
 	}
 
-	private int changedEf(int start, int end, int dist, int distance) {
+	private int changedEf(int startSpot, int endSpot, int start, int end, int dist, int distance) {
 		int nEfficiency = 0;
 		for (int i = 0; i < path.size(); i++) {
 			int cDist = 0;
@@ -105,8 +104,8 @@ public class Taxi {
 							&& task.get(k) == null)
 						temp = k;
 				}
-				cDist = task.get(i).getTime() + getPathLength(-1, temp) + temp
-						- 1;
+				cDist = task.get(i).getTime() + getPathLength(-1, temp) 
+						;
 				nDist = cDist;
 				if (i >= endSpot)
 					cDist += 2 + dist;
@@ -189,7 +188,7 @@ public class Taxi {
 					System.out.println("efficiency calculation error");
 			}
 		}
-		nEfficiency += (int) Math.pow((dist + getPathLength(-1, startSpot - 1) + endSpot + 1)
+		nEfficiency += (int) Math.pow((dist + getPathLength(-1, startSpot - 1) + 1)
 				/ Math.pow(distance + 2, Algorithm.alpha), 2);
 		return nEfficiency;
 	}

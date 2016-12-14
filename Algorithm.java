@@ -167,7 +167,7 @@ public class Algorithm {
 			scanner.println(line + "c");// end minute
 			line = "";
 		}
-		 //System.out.println(((double)(System.nanoTime()-time)/1000000000.0) + " ");
+		 System.out.println(((double)(System.nanoTime()-time)/1000000000.0) + " ");
 		efficiency();
 	}
 

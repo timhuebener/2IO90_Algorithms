@@ -322,6 +322,15 @@ public class Algorithm {
 		// System.out.print(bestTaxi + " ");
 		return bestTaxi;
 	}
+    
+    private void printFloyd() {
+        for (int i = 0; i < network.length; i++) {
+            for (int j = 0; j < network.length; j++) {
+                System.out.print(network[i].getDist(j) + " ");
+            }
+            System.out.println();
+        }
+    }
 
 	private int[] bubbleDown(int[] topnodes, int index, int node) {
 		int temp = topnodes[index];

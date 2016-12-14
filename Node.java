@@ -25,7 +25,7 @@ public class Node {
 	}
 	public int getNext(int dest){
 		for(int i = 0; i < neighbors.length; i++){
-			if(Algorithm.network[neighbors[i]].getDist(dest) == getDist(dest)-1){
+			if(Algorithm.Network[neighbors[i]].getDist(dest) == getDist(dest)-1){
 				return neighbors[i];
 			}
 		}

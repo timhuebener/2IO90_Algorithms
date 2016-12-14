@@ -7,7 +7,7 @@ public class Passenger {
 		destination = dest;
 		this.taxi = -1;
 		time = 0;
-		distance = Algorithm.network[node].getDist(dest);
+		distance = Algorithm.Network[node].getDist(dest);
 	}
 
 	public void setTaxi(int taxi){
@@ -23,6 +23,9 @@ public class Passenger {
 	
 	public void incrementTime(){
 		time++;
+		if(time > Algorithm.MaxTime){
+			//System.out.println("halp, passenger got lost. Taxi# : " + taxi + " destination: " + destination + " Initial distance : " + distance);
+		}
 	}
 	
 	public int getTime(){

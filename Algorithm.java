@@ -132,7 +132,7 @@ public class Algorithm {
         for (int i = 0; i < trainingNodes.length; i++) {
             for (int j = 0; j < taxis.length; j++) {
                 if (placeTaxis2[j] == -1
-                    || placeTaxis2[i] >= trainingNodes[placeTaxis2[j]]) {
+                    || trainingNodes[i] >= trainingNodes[placeTaxis2[j]]) {
                     placeTaxis2 = bubbleDown(placeTaxis2, j, i);
                     break;
                 }

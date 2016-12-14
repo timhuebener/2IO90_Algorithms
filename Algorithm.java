@@ -66,6 +66,9 @@ public class Algorithm {
         training = Integer.parseInt(temp.substring(0, temp.indexOf(" ")));
         totalCalls = Integer.parseInt(temp.substring(temp.indexOf(" ") + 1));
         // set starting points for taxis in this case, all node 0
+
+		// ------------------------------------------------------------------------------
+		// Placing Taxis before Training based on number of neighbours
         int[] placeTaxis = new int[taxis.length];
         for (int i = 0; i < placeTaxis.length; i++) {
             placeTaxis[i] = -1;
@@ -98,6 +101,8 @@ public class Algorithm {
         }
         scanner.println(line + "c");
         line = "";
+		// ------------------------------------------------------------------------------
+		// counts amount of calls for each node in training periode
         trainingNodes = new double[network.length];
         
         while(training > 0){
@@ -122,12 +127,17 @@ public class Algorithm {
             }
             scanner.println("c");
         }
-        
+
+        // ------------------------------------------------------------------------------
+		// Placing Taxis based on amount of calls in neighbouring nodes
+		// Finding calls in neighbours
         for(int i = 0; i < network.length;i++){
             for(int j = 0; j<network[i].getNeighbors().length;j++){
                 nodeWithCallsNeighbours[i]+=trainingNodes[network[i].getNeighbors()[j]];
             }
         }
+
+        //placing Taxis
         for(int i = 0;i<nodeWithCallsNeighbours.length;i++){
             System.out.print(nodeWithCallsNeighbours[i]);
         }
@@ -155,7 +165,7 @@ public class Algorithm {
          taxis[i] = new Taxi(placeTaxis2[i], capacity);
          line = line + "m " + (i + 1) + " " + placeTaxis2[i] + " ";
          }
-         }*/
+         }
         
         // ------------------------------------------------------------------------------
         // main loop, every loop represents a minute

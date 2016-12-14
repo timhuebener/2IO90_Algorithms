@@ -132,15 +132,15 @@ public class Algorithm {
             System.out.print(nodeWithCallsNeighbours[i]);
         }
         
-        /*int[] placeTaxis2 = new int[taxis.length];
+        int[] placeTaxis2 = new int[taxis.length];
          for (int i = 0; i < placeTaxis2.length; i++) {
          placeTaxis2[i] = -1;
          }
          // place taxis here
-         for (int i = 0; i < trainingNodes.length; i++) {
+         for (int i = 0; i < nodeWithCallsNeighbours.length; i++) {
          for (int j = 0; j < taxis.length; j++) {
          if (placeTaxis2[j] == -1
-         || trainingNodes[i] > trainingNodes[placeTaxis2[j]]) {
+         || nodeWithCallsNeighbours[i] > nodeWithCallsNeighbours[placeTaxis2[j]]) {
          placeTaxis2 = bubbleDown(placeTaxis2, j, i);
          break;
          }

@@ -129,6 +129,9 @@ public class Algorithm {
                 temp = temp.substring(temp.indexOf(" ") + 1);
                 
             }
+            if(training != 0){
+                scanner.println("c");
+            }
         }
         
         for(int i = 0;i<nodesWithCallsNeighbors.length;i++){

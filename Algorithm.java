@@ -120,118 +120,119 @@ public class Algorithm {
                 temp = temp.substring(temp.indexOf(" ") + 1);
                 
             }
-            
-            for(int i = 0;i<nodesWithCallsNeighbors.length;i++){
-                for(int j = 0;j<Network[i].getNeighbors().length;j++){
-                    nodesWithCallsNeighbors[i]=trainingNodes[Network[i].getNeighbors()[j]];
-                }
-            }
-            
-            int[] placeTaxis2 = new int[taxis.length];
-            for (int i = 0; i < placeTaxis2.length; i++) {
-                placeTaxis2[i] = -1;
-            }
-            // place taxis here
-            for (int i = 0; i < Network.length; i++) {
-                for (int j = 0; j < taxis.length; j++) {
-                    if (placeTaxis2[j] == -1
-                        || Network[i].getNeighbors().length > Network[placeTaxis[j]]
-                        .getNeighbors().length) {
-                        placeTaxis2 = bubbleDown(placeTaxis2, j, i);
-                        break;
-                    }
-                }
-            }
-            
-            /*
-             * for(int i = 0; i < placeTaxis.length;i++){
-             * System.out.print(placeTaxis[i]); }
-             */
-            
-            // set starting points for taxis in this case, all node 0
-            for (int i = 0; i < taxis.length; i++) {
-                if (placeTaxis2[i] == -1) {
-                    taxis[i] = new Taxi(placeTaxis2[0], capacity);
-                    line = line + "m " + (i + 1) + " " + placeTaxis2[0] + " ";
-                } else {
-                    taxis[i] = new Taxi(placeTaxis2[i], capacity);
-                    line = line + "m " + (i + 1) + " " + placeTaxis2[i] + " ";
-                }
-            }
-            scanner.println(line + "c");
-            line = "";
-            while (!done()) {
-                
-                // increment total time waited for all passangers
-                incrementTime();
-                
-                if (totalCalls > 0) {// add passengers to nodes
-                    totalCalls--;
-                    temp = scanner.nextLine() + " ";
-                    temp = temp.substring(temp.indexOf(" ") + 1);
-                    while (temp.length() > 0) {// skip # of new people since can be
-                        // derived from temp.length and 4 at
-                        // a time due to 2 numbers and 2
-                        // spaces
-                        // this is a rough one, add a passenger to the node equal to
-                        // the fist number with a destination equal to the second
-                        // number
-                        int node = Integer.parseInt(temp.substring(0,
-                                                                   temp.indexOf(" ")));
-                        temp = temp.substring(temp.indexOf(" ") + 1);
-                        int dest = Integer.parseInt(temp.substring(0,
-                                                                   temp.indexOf(" ")));
-                        temp = temp.substring(temp.indexOf(" ") + 1);
-                        // find best taxi
-                        Passenger p = new Passenger(node,dest);
-                        p.setTaxi(addToBestTaxi(p,node, dest, Network[node].getDist(dest)));
-                        Network[node].addPassenger(p);// add
-                        // passanger
-                        // to
-                        // the
-                        // node
-                        // with
-                        // its
-                        // destination
-                        // and
-                        // which
-                        // taxi
-                        // will
-                        // pick
-                        // it
-                        // up
-                        
-                    }
-                }
-                
-                // taxi behavior
-                for (int i = 0; i < taxis.length; i++) {
-                    if (taxis[i].atDest() != -2) {
-                        while (taxis[i].atDest() != -2) {
-                            if (taxis[i].atDest() == -1) {// drop off
-                                taxis[i].drop(i);
-                                line = line + "d " + (i + 1) + " "
-                                + taxis[i].getNode() + " ";
-                            } else {// pick up
-                                Passenger p = Network[taxis[i].getNode()].remove(i,
-                                                                                 taxis[i].atDest());
-                                taxis[i].pickUp(p, i);
-                                line = line + "p " + (i + 1) + " "
-                                + p.getDestination() + " ";
-                            }
-                        }
-                    } else {// not at a destination
-                        int m = taxis[i].moveAlong();
-                        line = line + "m " + (i + 1) + " " + m + " ";
-                    }
-                }
-                scanner.println(line + "c");// end minute
-                line = "";
-            }
-            System.out.println(((double)(System.nanoTime()-time)/1000000000.0) + " ");
-            efficiency();
         }
+        
+        for(int i = 0;i<nodesWithCallsNeighbors.length;i++){
+            for(int j = 0;j<Network[i].getNeighbors().length;j++){
+                nodesWithCallsNeighbors[i]=trainingNodes[Network[i].getNeighbors()[j]];
+            }
+        }
+        
+        int[] placeTaxis2 = new int[taxis.length];
+        for (int i = 0; i < placeTaxis2.length; i++) {
+            placeTaxis2[i] = -1;
+        }
+        // place taxis here
+        for (int i = 0; i < Network.length; i++) {
+            for (int j = 0; j < taxis.length; j++) {
+                if (placeTaxis2[j] == -1
+                    || Network[i].getNeighbors().length > Network[placeTaxis[j]]
+                    .getNeighbors().length) {
+                    placeTaxis2 = bubbleDown(placeTaxis2, j, i);
+                    break;
+                }
+            }
+        }
+        
+        /*
+         * for(int i = 0; i < placeTaxis.length;i++){
+         * System.out.print(placeTaxis[i]); }
+         */
+        
+        // set starting points for taxis in this case, all node 0
+        for (int i = 0; i < taxis.length; i++) {
+            if (placeTaxis2[i] == -1) {
+                taxis[i] = new Taxi(placeTaxis2[0], capacity);
+                line = line + "m " + (i + 1) + " " + placeTaxis2[0] + " ";
+            } else {
+                taxis[i] = new Taxi(placeTaxis2[i], capacity);
+                line = line + "m " + (i + 1) + " " + placeTaxis2[i] + " ";
+            }
+        }
+        scanner.println(line + "c");
+        line = "";
+        while (!done()) {
+            
+            // increment total time waited for all passangers
+            incrementTime();
+            
+            if (totalCalls > 0) {// add passengers to nodes
+                totalCalls--;
+                temp = scanner.nextLine() + " ";
+                temp = temp.substring(temp.indexOf(" ") + 1);
+                while (temp.length() > 0) {// skip # of new people since can be
+                    // derived from temp.length and 4 at
+                    // a time due to 2 numbers and 2
+                    // spaces
+                    // this is a rough one, add a passenger to the node equal to
+                    // the fist number with a destination equal to the second
+                    // number
+                    int node = Integer.parseInt(temp.substring(0,
+                                                               temp.indexOf(" ")));
+                    temp = temp.substring(temp.indexOf(" ") + 1);
+                    int dest = Integer.parseInt(temp.substring(0,
+                                                               temp.indexOf(" ")));
+                    temp = temp.substring(temp.indexOf(" ") + 1);
+                    // find best taxi
+                    Passenger p = new Passenger(node,dest);
+                    p.setTaxi(addToBestTaxi(p,node, dest, Network[node].getDist(dest)));
+                    Network[node].addPassenger(p);// add
+                    // passanger
+                    // to
+                    // the
+                    // node
+                    // with
+                    // its
+                    // destination
+                    // and
+                    // which
+                    // taxi
+                    // will
+                    // pick
+                    // it
+                    // up
+                    
+                }
+            }
+            
+            // taxi behavior
+            for (int i = 0; i < taxis.length; i++) {
+                if (taxis[i].atDest() != -2) {
+                    while (taxis[i].atDest() != -2) {
+                        if (taxis[i].atDest() == -1) {// drop off
+                            taxis[i].drop(i);
+                            line = line + "d " + (i + 1) + " "
+                            + taxis[i].getNode() + " ";
+                        } else {// pick up
+                            Passenger p = Network[taxis[i].getNode()].remove(i,
+                                                                             taxis[i].atDest());
+                            taxis[i].pickUp(p, i);
+                            line = line + "p " + (i + 1) + " "
+                            + p.getDestination() + " ";
+                        }
+                    }
+                } else {// not at a destination
+                    int m = taxis[i].moveAlong();
+                    line = line + "m " + (i + 1) + " " + m + " ";
+                }
+            }
+            scanner.println(line + "c");// end minute
+            line = "";
+        }
+        System.out.println(((double)(System.nanoTime()-time)/1000000000.0) + " ");
+        efficiency();
     }
+    
     
     private void efficiency(){
         double efficiency = 0;

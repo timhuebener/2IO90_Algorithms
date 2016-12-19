@@ -15,6 +15,7 @@ public class Algorithm {
     public static Node[] Network;// array of nodes representing the network
     public static ArrayList<Integer> Times;
     public static ArrayList<Integer> Distances;
+    public static ArrayList<Integer> bfs;
     int training;
     int totalCalls;
     String line = "";
@@ -24,6 +25,7 @@ public class Algorithm {
         // class------------------------
         Times = new ArrayList<Integer>();
         Distances = new ArrayList<Integer>();
+        bfs = new ArrayList<Integer>();
         long time = System.nanoTime();
         scanner = TaxiScanner.getInstance();
         linesLeft = Integer.parseInt(scanner.nextLine());
@@ -51,14 +53,21 @@ public class Algorithm {
             for (int j = 0; temp.length() > 0; j++) {
                 int node = Integer
                 .parseInt(temp.substring(0, temp.indexOf(" ")));// ----------
-                dist[node] = 1;
                 neighbors[j] = node;
                 
                 temp = temp.substring(temp.indexOf(" ") + 1);
             }
             Network[i] = new Node(neighbors, dist);
         }
-        floydWarshall();
+
+        for(int i =0;i<Network.length;i++){
+			for(int j=0;j< bfs.size();j++){
+				System.out.println(bfs.get(j));
+			}
+			bfs.add(i);
+            bfs(i);
+        }
+        
         // printFloyd();
         temp = scanner.nextLine();
         training = Integer.parseInt(temp.substring(0, temp.indexOf(" ")));
@@ -337,5 +346,24 @@ public class Algorithm {
         }
         return topnodes;
         
+    }
+    
+    private void bfs(int root){
+        //root is first node 
+		int node = bfs.get(0);
+		bfs.remove(0);
+		for(int i=0; i<Network[node].getNeighbors().length;i++){
+			//for all neighbours
+            if( Network[root].getDist(Network[node].getNeighbors()[i]) == Integer.MAX_VALUE / 10){
+                //if we have no distance from the root to the neighbour(if distance is infinity)
+                Network[root].setDist(Network[root].getDist(node)+1, Network[node].getNeighbors()[i]);
+                //distance root to neigbour is distance current node + 1
+                bfs.add(Network[node].getNeighbors()[i]);
+            }
+        }
+       
+        if(bfs.size()!=0){
+        	bfs(root);
+        }
     }
 }

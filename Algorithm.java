@@ -10,6 +10,7 @@ public class Algorithm {
     public static int MaxTime;
     Taxi[] taxis;// array containing all taxis
     int capacity;
+    int countP = 0;
     int[] trainingNodes;
     int[] nodesWithCallsNeighbors;
     public static Node[] Network;// array of nodes representing the network
@@ -60,12 +61,14 @@ public class Algorithm {
             Network[i] = new Node(neighbors, dist);
         }
         
-        for(int i =0;i<Network.length;i++){
-            for(int j=0;j< bfs.size();j++){
-                System.out.println(bfs.get(j));
-            }
+        for(int i =0;i<Network.length;){
+            
             bfs.add(i);
             bfs(i);
+            if(bfs.size()!=0){
+                bfs(i);
+            }
+            else i++;
         }
         
         // printFloyd();
@@ -78,10 +81,8 @@ public class Algorithm {
         
         // set starting points for taxis in this case, all node 0
         for (int i = 0; i < taxis.length; i++) {
-            
             taxis[i] = new Taxi(0, capacity);
             line = line + "m " + (i + 1) + " " + '0' + " ";
-            
         }
         scanner.println(line + "c");
         line = "";
@@ -135,10 +136,6 @@ public class Algorithm {
             }
         }
         
-        /*
-         * for(int i = 0; i < placeTaxis.length;i++){
-         * System.out.print(placeTaxis[i]); }
-         */
         
         // set starting points for taxis in this case, all node 0
         for (int i = 0; i < taxis.length; i++) {
@@ -152,10 +149,11 @@ public class Algorithm {
         }
         scanner.println(line + "c");
         line = "";
+        
         while (!done()) {
             
             // increment total time waited for all passangers
-            incrementTime();
+            //incrementTime();
             
             if (totalCalls > 0) {// add passengers to nodes
                 totalCalls--;
@@ -210,6 +208,7 @@ public class Algorithm {
                             taxis[i].pickUp(p, i);
                             line = line + "p " + (i + 1) + " "
                             + p.getDestination() + " ";
+                            countP++;
                         }
                     }
                 } else {// not at a destination
@@ -221,73 +220,50 @@ public class Algorithm {
             line = "";
         }
         System.out.println(((double)(System.nanoTime()-time)/1000000000.0) + " ");
-        efficiency();
+        //efficiency();
     }
     
     
-    private void efficiency(){
-        double efficiency = 0;
-        for(int i = 0; i < Times.size();i++){
-            efficiency += Math.pow((Times.get(i)/Math.pow((Distances.get(i) + 2),alpha)),2);
-        }
-        System.out.println("The efficiency is : " + (int)efficiency);
-    }
-    private void incrementTime(){
-        for(int i = 0; i < taxis.length;i++){
-            taxis[i].incrementTime();
-        }
-        for(int i = 0; i < Network.length;i++){
-            Network[i].incrementTime();
-        }
-    }
+    //    private void efficiency(){
+    //        double efficiency = 0;
+    //        for(int i = 0; i < Times.size();i++){
+    //            efficiency += Math.pow((Times.get(i)/Math.pow((Distances.get(i) + 2),alpha)),2);
+    //        }
+    //        System.out.println("The efficiency is : " + (int)efficiency);
+    //    }
+    //    private void incrementTime(){
+    //        for(int i = 0; i < taxis.length;i++){
+    //            taxis[i].incrementTime();
+    //        }
+    //        for(int i = 0; i < Network.length;i++){
+    //            Network[i].incrementTime();
+    //        }
+    //    }
     private boolean done() {// done when no more lines in input, no more
         // passengers in nodes or taxies
-        return (!scanner.hasNextLine() && nodesEmpty() && taxisEmpty());
+        return (!scanner.hasNextLine() && Times.size() == countP);
     }
     
     // checks is all taxis are empty
-    private boolean taxisEmpty() {
-        for (int i = 0; i < taxis.length; i++) {
-            if (!taxis[i].empty()) {
-                return false;
-            }
-        }
-        return true;
-    }
+    //    private boolean taxisEmpty() {
+    //        for (int i = 0; i < taxis.length; i++) {
+    //            if (!taxis[i].empty()) {
+    //                return false;
+    //            }
+    //        }
+    //        return true;
+    //    }
+    //
+    //    // checks if all nodes are empty of passengers
+    //    private boolean nodesEmpty() {
+    //        for (int i = 0; i < Network.length; i++) {
+    //            if (!Network[i].empty()) {
+    //                return false;
+    //            }
+    //        }
+    //        return true;
+    //    }
     
-    // checks if all nodes are empty of passengers
-    private boolean nodesEmpty() {
-        for (int i = 0; i < Network.length; i++) {
-            if (!Network[i].empty()) {
-                return false;
-            }
-        }
-        return true;
-    }
-    
-    private void floydWarshall() {
-        
-        for (int k = 0; k < Network.length; k++) {
-            // Pick all vertices as source one by one
-            for (int i = 0; i < Network.length; i++) {
-                // Pick all vertices as destination for the
-                // above picked source
-                for (int j = i; j < Network.length; j++) {
-                    // If vertex k is on the shortest path from
-                    // i to j, then update the value of dist[i][j]
-                    if (Network[i].getDist(k) + Network[k].getDist(j) < Network[i]
-                        .getDist(j)) {
-                        Network[i].setDist(
-                                           Network[i].getDist(k) + Network[k].getDist(j),
-                                           j);
-                        Network[j].setDist(
-                                           Network[i].getDist(k) + Network[k].getDist(j),
-                                           i);
-                    }
-                }
-            }
-        }
-    }
     
     private void printFloyd() {
         for (int i = 0; i < Network.length; i++) {
@@ -344,8 +320,6 @@ public class Algorithm {
             }
         }
         
-        if(bfs.size()!=0){
-            bfs(root);
-        }
+        
     }
 }

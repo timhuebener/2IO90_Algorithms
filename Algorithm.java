@@ -59,12 +59,12 @@ public class Algorithm {
             }
             Network[i] = new Node(neighbors, dist);
         }
-
+        
         for(int i =0;i<Network.length;i++){
-			for(int j=0;j< bfs.size();j++){
-				System.out.println(bfs.get(j));
-			}
-			bfs.add(i);
+            for(int j=0;j< bfs.size();j++){
+                System.out.println(bfs.get(j));
+            }
+            bfs.add(i);
             bfs(i);
         }
         
@@ -73,36 +73,15 @@ public class Algorithm {
         training = Integer.parseInt(temp.substring(0, temp.indexOf(" ")));
         totalCalls = Integer.parseInt(temp.substring(temp.indexOf(" ") + 1));
         // set starting points for taxis in this case, all node 0
-        int[] placeTaxis = new int[taxis.length];
-        for (int i = 0; i < placeTaxis.length; i++) {
-            placeTaxis[i] = -1;
-        }
-        // place taxis here
-        for (int i = 0; i < Network.length; i++) {
-            for (int j = 0; j < taxis.length; j++) {
-                if (placeTaxis[j] == -1
-                    || Network[i].getNeighbors().length > Network[placeTaxis[j]]
-                    .getNeighbors().length) {
-                    placeTaxis = bubbleDown(placeTaxis, j, i);
-                    break;
-                }
-            }
-        }
         
-        /*
-         * for(int i = 0; i < placeTaxis.length;i++){
-         * System.out.print(placeTaxis[i]); }
-         */
+        
         
         // set starting points for taxis in this case, all node 0
         for (int i = 0; i < taxis.length; i++) {
-            if (placeTaxis[i] == -1) {
-                taxis[i] = new Taxi(placeTaxis[0], capacity);
-                line = line + "m " + (i + 1) + " " + placeTaxis[0] + " ";
-            } else {
-                taxis[i] = new Taxi(placeTaxis[i], capacity);
-                line = line + "m " + (i + 1) + " " + placeTaxis[i] + " ";
-            }
+            
+            taxis[i] = new Taxi(0, capacity);
+            line = line + "m " + (i + 1) + " " + '0' + " ";
+            
         }
         scanner.println(line + "c");
         line = "";
@@ -136,7 +115,7 @@ public class Algorithm {
         
         for(int i = 0;i<nodesWithCallsNeighbors.length;i++){
             for(int j = 0;j<Network[i].getNeighbors().length;j++){
-                nodesWithCallsNeighbors[i]=trainingNodes[Network[i].getNeighbors()[j]];
+                nodesWithCallsNeighbors[i]=trainingNodes[Network[i].getNeighbors()[j]] + trainingNodes[i];
             }
         }
         
@@ -352,11 +331,11 @@ public class Algorithm {
     }
     
     private void bfs(int root){
-        //root is first node 
-		int node = bfs.get(0);
-		bfs.remove(0);
-		for(int i=0; i<Network[node].getNeighbors().length;i++){
-			//for all neighbours
+        //root is first node
+        int node = bfs.get(0);
+        bfs.remove(0);
+        for(int i=0; i<Network[node].getNeighbors().length;i++){
+            //for all neighbours
             if( Network[root].getDist(Network[node].getNeighbors()[i]) == Integer.MAX_VALUE / 10){
                 //if we have no distance from the root to the neighbour(if distance is infinity)
                 Network[root].setDist(Network[root].getDist(node)+1, Network[node].getNeighbors()[i]);
@@ -364,9 +343,9 @@ public class Algorithm {
                 bfs.add(Network[node].getNeighbors()[i]);
             }
         }
-       
+        
         if(bfs.size()!=0){
-        	bfs(root);
+            bfs(root);
         }
     }
 }

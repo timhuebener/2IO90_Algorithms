@@ -127,7 +127,7 @@ public class Algorithm {
         for (int i = 0; i < Network.length; i++) {
             for (int j = 0; j < taxis.length; j++) {
                 if (placeTaxis2[j] == -1
-                    || Network[i].getNeighbors().length > Network[placeTaxis[j]]
+                    || Network[i].getNeighbors().length > Network[placeTaxis2[j]]
                     .getNeighbors().length) {
                     placeTaxis2 = bubbleDown(placeTaxis2, j, i);
                     break;

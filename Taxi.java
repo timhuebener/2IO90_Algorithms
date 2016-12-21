@@ -310,5 +310,8 @@ public class Taxi {
 			occupants.get(i).incrementTime();
 		}
 	}
+	public int pathsize(){
+		return path.size();
+	}
 
 }

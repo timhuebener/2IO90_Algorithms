@@ -10,19 +10,16 @@ public class Algorithm {
     public static int MaxTime;
     Taxi[] taxis;// array containing all taxis
     int capacity;
+    int countP = 0;
     int[] trainingNodes;
     int[] nodesWithCallsNeighbors;
     public static Node[] Network;// array of nodes representing the network
     public static ArrayList<Integer> Times;
     public static ArrayList<Integer> Distances;
     public static ArrayList<Integer> bfs;
-    int countP = 0;
     int training;
     int totalCalls;
     String line = "";
-    int longestpath;
-    double greed = 1;
-    int[][] taxilist;
     
     public Algorithm() {
         // -----------------------reads input using TaxiScanner
@@ -61,84 +58,36 @@ public class Algorithm {
                 
                 temp = temp.substring(temp.indexOf(" ") + 1);
             }
-            Network[i] = new Node(neighbors,dist,i);
+            Network[i] = new Node(neighbors, dist);
         }
         
-        /*for(int i =0;i<Network.length;i++){
-         for(int j=0;j< bfs.size();j++){
-         System.out.println(bfs.get(j));
-         }
-         bfs.add(i);
-         while(bfs.size()!=0){
-         bfs(i);
-         }
-         }*/
+        for (int i = 0; i < Network.length;) {
+            
+            bfs.add(i);
+            bfs(i);
+            if (bfs.size() != 0) {
+                bfs(i);
+            } else
+                i++;
+        }
         
         // printFloyd();
-        
         temp = scanner.nextLine();
         training = Integer.parseInt(temp.substring(0, temp.indexOf(" ")));
         totalCalls = Integer.parseInt(temp.substring(temp.indexOf(" ") + 1));
-        taxilist = new int[taxis.length][2];
         // set starting points for taxis in this case, all node 0
         
-        if(training > 0){
-            for (int i = 0; i < taxis.length; i++) {
-                taxis[i] = new Taxi(0, capacity);
-                line = line + "m " + (i + 1) + " " + '0' + " ";
-            }
-            scanner.println(line + "c");
-            line = "";
-        }
-        
-        taxilist = new int[taxis.length][2];
-        // place taxis here
-        
-        
-        /*
-         * for(int i = 0; i < placeTaxis.length;i++){
-         * System.out.print(placeTaxis[i]); }
-         */
-        
         // set starting points for taxis in this case, all node 0
-        
-        
-        if(training == 0){
-            // set starting points for taxis in this case, all node 0
-            int[] placeTaxis = new int[taxis.length];
-            for (int i = 0; i < placeTaxis.length; i++) {
-                placeTaxis[i] = -1;
-            }
-            
-            // place taxis here
-            for (int i = 0; i < Network.length; i++) {
-                for (int j = 0; j < taxis.length; j++) {
-                    
-                    if (placeTaxis[j] == -1
-                        || Network[i].getNeighbors().length > Network[placeTaxis[j]]
-                        .getNeighbors().length) {
-                        placeTaxis = bubbleDown(placeTaxis, j, i);
-                        break;
-                    }
-                }
-            }
-            for (int i = 0; i < taxis.length; i++) {
-                if (placeTaxis[i] == -1) {
-                    taxilist[i][0] = i;
-                    taxis[i] = new Taxi(placeTaxis[0], capacity);
-                    line = line + "m " + (i + 1) + " " + placeTaxis[0] + " ";
-                } else {
-                    taxis[i] = new Taxi(placeTaxis[i], capacity);
-                    line = line + "m " + (i + 1) + " " + placeTaxis[i] + " ";
-                }
-            }
-            scanner.println(line + "c");
-            line = "";
+        for (int i = 0; i < taxis.length; i++) {
+            taxis[i] = new Taxi(0, capacity);
+            line = line + "m " + (i + 1) + " " + '0' + " ";
         }
+        scanner.println(line + "c");
+        line = "";
         // ------------------------------------------------------------------------------
         // main loop, every loop represents a minute
         if(training > 0){
-            while(training > 0){
+            while (training > 0) {
                 totalCalls--;
                 training--;
                 temp = scanner.nextLine() + " ";
@@ -150,23 +99,24 @@ public class Algorithm {
                     // this is a rough one, add a passenger to the node equal to
                     // the fist number with a destination equal to the second
                     // number
-                    int node = Integer.parseInt(temp.substring(0,
-                                                               temp.indexOf(" ")));
-                    trainingNodes[node]+=1;
+                    int node = Integer
+                    .parseInt(temp.substring(0, temp.indexOf(" ")));
+                    trainingNodes[node] += 1;
                     temp = temp.substring(temp.indexOf(" ") + 1);
-                    int dest = Integer.parseInt(temp.substring(0,
-                                                               temp.indexOf(" ")));
+                    int dest = Integer
+                    .parseInt(temp.substring(0, temp.indexOf(" ")));
                     temp = temp.substring(temp.indexOf(" ") + 1);
                     
                 }
-                if(training != 0){
+                if (training != 0) {
                     scanner.println("c");
                 }
             }
             
-            for(int i = 0;i<nodesWithCallsNeighbors.length;i++){
-                for(int j = 0;j<Network[i].getNeighbors().length;j++){
-                    nodesWithCallsNeighbors[i]=trainingNodes[Network[i].getNeighbors()[j]] + trainingNodes[i];
+            for (int i = 0; i < nodesWithCallsNeighbors.length; i++) {
+                for (int j = 0; j < Network[i].getNeighbors().length; j++) {
+                    nodesWithCallsNeighbors[i] = trainingNodes[Network[i]
+                                                               .getNeighbors()[j]] + trainingNodes[i];
                 }
             }
             
@@ -186,15 +136,9 @@ public class Algorithm {
                 }
             }
             
-            /*
-             * for(int i = 0; i < placeTaxis.length;i++){
-             * System.out.print(placeTaxis[i]); }
-             */
-            
-            // set starting points for taxis in this case, all node 0
+            // set starting points for taxis
             for (int i = 0; i < taxis.length; i++) {
                 if (placeTaxis2[i] == -1) {
-                    taxilist[i][0] = i;
                     taxis[i] = new Taxi(placeTaxis2[0], capacity);
                     line = line + "m " + (i + 1) + " " + placeTaxis2[0] + " ";
                 } else {
@@ -206,13 +150,6 @@ public class Algorithm {
             line = "";
         }
         while (!done()) {
-            longestpath =0;
-            for(int i=0; i<taxis.length;i++){
-                if( taxis[i].pathsize()>longestpath) longestpath=taxis[i].pathsize();
-                
-            }
-            if(longestpath<20) greed = 1;
-            else if(longestpath>20) greed = 0.1;
             
             // increment total time waited for all passangers
             incrementTime();
@@ -235,8 +172,9 @@ public class Algorithm {
                                                                temp.indexOf(" ")));
                     temp = temp.substring(temp.indexOf(" ") + 1);
                     // find best taxi
-                    Passenger p = new Passenger(node,dest);
-                    p.setTaxi(addToBestTaxi(p,node, dest, Network[node].getDist(dest)));
+                    Passenger p = new Passenger(node, dest);
+                    p.setTaxi(addToBestTaxi(p, node, dest,
+                                            Network[node].getDist(dest)));
                     Network[node].addPassenger(p);// add
                     // passanger
                     // to
@@ -281,75 +219,37 @@ public class Algorithm {
             scanner.println(line + "c");// end minute
             line = "";
         }
-        //System.out.println(((double)(System.nanoTime()-time)/1000000000.0) + " ");
+        System.out.println(((double) (System.nanoTime() - time) / 1000000000.0)
+                           + " ");
         //efficiency();
     }
     
+    //	private void efficiency() {
+    //		double efficiency = 0;
+    //		for (int i = 0; i < Times.size(); i++) {
+    //			efficiency += Math
+    //					.pow((Times.get(i) / Math
+    //							.pow((Distances.get(i) + 2), alpha)),
+    //							2);
+    //		}
+    //		System.out.println("The efficiency is : " + (int) efficiency);
+    //	}
     
-    private void efficiency(){
-        double efficiency = 0;
-        for(int i = 0; i < Times.size();i++){
-            efficiency += Math.pow((Times.get(i)/Math.pow((Distances.get(i) + 2),alpha)),2);
-        }
-        System.out.println("The efficiency is : " + (int)efficiency);
-    }
-    private void incrementTime(){
-        for(int i = 0; i < taxis.length;i++){
+    private void incrementTime() {
+        for (int i = 0; i < taxis.length; i++) {
             taxis[i].incrementTime();
         }
-        for(int i = 0; i < Network.length;i++){
+        for (int i = 0; i < Network.length; i++) {
             Network[i].incrementTime();
         }
     }
+    
     private boolean done() {// done when no more lines in input, no more
         // passengers in nodes or taxies
         return (!scanner.hasNextLine() && Times.size() == countP);
     }
     
-    // checks is all taxis are empty
-    //    private boolean taxisEmpty() {
-    //        for (int i = 0; i < taxis.length; i++) {
-    //            if (!taxis[i].empty()) {
-    //                return false;
-    //            }
-    //        }
-    //        return true;
-    //    }
-    
-    // checks if all nodes are empty of passengers
-    //    private boolean nodesEmpty() {
-    //        for (int i = 0; i < Network.length; i++) {
-    //            if (!Network[i].empty()) {
-    //                return false;
-    //            }
-    //        }
-    //        return true;
-    //    }
-    
-    //    private void floydWarshall() {
-    //
-    //        for (int k = 0; k < Network.length; k++) {
-    //            // Pick all vertices as source one by one
-    //            for (int i = 0; i < Network.length; i++) {
-    //                // Pick all vertices as destination for the
-    //                // above picked source
-    //                for (int j = i; j < Network.length; j++) {
-    //                    // If vertex k is on the shortest path from
-    //                    // i to j, then update the value of dist[i][j]
-    //                    if (Network[i].getDist(k) + Network[k].getDist(j) < Network[i]
-    //                        .getDist(j)) {
-    //                        Network[i].setDist(
-    //                                           Network[i].getDist(k) + Network[k].getDist(j),
-    //                                           j);
-    //                        Network[j].setDist(
-    //                                           Network[i].getDist(k) + Network[k].getDist(j),
-    //                                           i);
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
-    
+    //prints the shortest path matrix
     private void printFloyd() {
         for (int i = 0; i < Network.length; i++) {
             for (int j = 0; j < Network.length; j++) {
@@ -361,37 +261,13 @@ public class Algorithm {
     
     // check each taxi to find which taxi has the shortest weighted change in
     // path if the new nodes where to be added
-    
-    
-    private int addToBestTaxi(Passenger p,int start, int end, int dist) {
+    private int addToBestTaxi(Passenger p, int start, int end, int dist) {
         int bestTaxi = -1;
         int bestTime = Integer.MAX_VALUE;
-        if(greed!=1){
-            for(int i=0;i<taxis.length;i++) {
-                taxilist[i][0]=i;
-                taxilist[i][1]= Network[start].getDist(taxis[i].getNode());
-                
-            }
-            
-            for (int i=1; i < taxis.length; i++) {
-                int temp = taxilist[i][1];
-                int temp2 = taxilist[i][0];
-                int j;
-                for (j = i - 1; j >= 0 && temp < taxilist[j][1] ; j--){
-                    taxilist[j+1][1] = taxilist[j][1];
-                    taxilist[j+1][0] = taxilist[j][0];
-                }
-                taxilist[j+1][1] = temp;
-                taxilist[j+1][0] = temp2;
-            }
-        }
-        
-        
-        
-        for (int i = 0; i < taxis.length*greed; i++) {
-            int temp = taxis[taxilist[i][0]].testEfChange(start, end, dist);
+        for (int i = 0; i < taxis.length; i++) {
+            int temp = taxis[i].testEfChange(start, end, dist);
             if (temp < bestTime) {// check taxi
-                bestTaxi = taxilist[i][0];
+                bestTaxi = i;
                 bestTime = temp;
             }
         }
@@ -415,18 +291,21 @@ public class Algorithm {
         
     }
     
-    private void bfs(int root){
-        //root is first node
+    private void bfs(int root) {
+        // root is first node
         int node = bfs.get(0);
         bfs.remove(0);
-        for(int i=0; i<Network[node].getNeighbors().length;i++){
-            //for all neighbours
-            if( Network[root].getDist(Network[node].getNeighbors()[i]) == Integer.MAX_VALUE / 10){
-                //if we have no distance from the root to the neighbour(if distance is infinity)
-                Network[root].setDist(Network[root].getDist(node)+1, Network[node].getNeighbors()[i]);
-                //distance root to neigbour is distance current node + 1
+        for (int i = 0; i < Network[node].getNeighbors().length; i++) {
+            // for all neighbours
+            if (Network[root].getDist(Network[node].getNeighbors()[i]) == Integer.MAX_VALUE / 10) {
+                // if we have no distance from the root to the neighbour(if
+                // distance is infinity)
+                Network[root].setDist(Network[root].getDist(node) + 1,
+                                      Network[node].getNeighbors()[i]);
+                // distance root to neigbour is distance current node + 1
                 bfs.add(Network[node].getNeighbors()[i]);
             }
         }
+        
     }
 }

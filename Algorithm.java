@@ -166,7 +166,7 @@ public class Algorithm {
             
             for(int i = 0;i<nodesWithCallsNeighbors.length;i++){
                 for(int j = 0;j<Network[i].getNeighbors().length;j++){
-                    nodesWithCallsNeighbors[i]=trainingNodes[Network[i].getNeighbors()[j]];
+                    nodesWithCallsNeighbors[i]=trainingNodes[Network[i].getNeighbors()[j]] + trainingNodes[i];
                 }
             }
             

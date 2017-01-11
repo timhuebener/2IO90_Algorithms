@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 //occupants and location
 public class Taxi {
-	private int node, endSpot, startSpot, end;
+	private int node, endSpot, startSpot, end, change;
 	private int capacity;
 	private ArrayList<Integer> path;
 	private ArrayList<Passenger> occupants, task;
@@ -78,7 +78,7 @@ public class Taxi {
 		this.end = end;
 		startSpot = 0;
 		endSpot = 0;
-		int change = Integer.MAX_VALUE;
+		change = Integer.MAX_VALUE;
 		for (int i = 0; i <= path.size(); i++) {
 			if (checkFull(i - 1) < capacity) {
 				for (int j = i; j <= path.size(); j++) {
@@ -143,6 +143,7 @@ public class Taxi {
 							nDist++;
 							cDist++;
 						}
+						
 						if (j == startSpot && j == endSpot) {
 							cDist += Algorithm.Network[path.get(j - 1)]
 									.getDist(start)
@@ -184,6 +185,8 @@ public class Taxi {
 																	.get(i)
 																	.getDestination()) + 2,
 													Algorithm.alpha), 2);
+					if(nEfficiency > change)
+						return nEfficiency+1;
 				}
 			}
 		}

@@ -4,21 +4,22 @@ import java.util.ArrayList;
 public class Algorithm {
 
 	// all those variables in the beginning
-	private TaxiScanner scanner;
-	private int linesLeft;
+	TaxiScanner scanner;
+	int linesLeft;
 	public static float alpha;
 	public static int MaxTime;
-	private Taxi[] taxis;// array containing all taxis
-	private int capacity;
-	private int countP = 0;
-	private int[] trainingNodes;
-	private int[] nodesWithCallsNeighbors;
+	Taxi[] taxis;// array containing all taxis
+	int capacity;
+	int countP = 0,totalD = 0;
+	int[] trainingNodes;
+	int[] nodesWithCallsNeighbors;
 	public static Node[] Network;// array of nodes representing the network
 	public static ArrayList<Integer> Times;
 	public static ArrayList<Integer> Distances;
 	public static ArrayList<Integer> bfs;
-	private int training;
-	private int totalCalls;
+	public static int BestNode = 0;
+	int training;
+	int totalCalls;
 	String line = "";
 
 	public Algorithm() {
@@ -27,7 +28,7 @@ public class Algorithm {
 		Times = new ArrayList<Integer>();
 		Distances = new ArrayList<Integer>();
 		bfs = new ArrayList<Integer>();
-		long time = System.nanoTime();
+		long time = System.nanoTime();//-----------------------------------------------------------------
 		scanner = TaxiScanner.getInstance();
 		linesLeft = Integer.parseInt(scanner.nextLine());
 		alpha = Float.parseFloat(scanner.nextLine());
@@ -95,10 +96,7 @@ public class Algorithm {
 							temp.indexOf(" ")));
 					trainingNodes[node] += 1;
 					temp = temp.substring(temp.indexOf(" ") + 1);
-					int dest = Integer.parseInt(temp.substring(0,
-							temp.indexOf(" ")));
 					temp = temp.substring(temp.indexOf(" ") + 1);
-
 				}
 				if (training != 0) {
 					scanner.println("c");
@@ -106,9 +104,10 @@ public class Algorithm {
 			}
 
 			for (int i = 0; i < nodesWithCallsNeighbors.length; i++) {
+				nodesWithCallsNeighbors[i] = trainingNodes[i];
 				for (int j = 0; j < Network[i].getNeighbors().length; j++) {
-					nodesWithCallsNeighbors[i] = trainingNodes[Network[i]
-							.getNeighbors()[j]] + trainingNodes[i];
+					nodesWithCallsNeighbors[i] += trainingNodes[Network[i]
+							.getNeighbors()[j]];
 				}
 			}
 
@@ -120,8 +119,7 @@ public class Algorithm {
 			for (int i = 0; i < Network.length; i++) {
 				for (int j = 0; j < taxis.length; j++) {
 					if (placeTaxis2[j] == -1
-							|| Network[i].getNeighbors().length > Network[placeTaxis2[j]]
-									.getNeighbors().length) {
+							|| nodesWithCallsNeighbors[i] > nodesWithCallsNeighbors[j]) {
 						placeTaxis2 = bubbleDown(placeTaxis2, j, i);
 						break;
 					}
@@ -140,12 +138,13 @@ public class Algorithm {
 			}
 			scanner.println(line + "c");
 			line = "";
+			BestNode = placeTaxis2[0];
 		}
 		// ------------------------------------------------------------------------------
 		// main loop, every loop represents a minute
 		while (!done()) {
 
-			// increment total time waited for all passangers
+			// increment total time waited for all passengers
 			incrementTime();
 
 			if (totalCalls > 0) {// add passengers to nodes
@@ -164,6 +163,7 @@ public class Algorithm {
 					p.setTaxi(addToBestTaxi(p, node, dest,
 							Network[node].getDist(dest)));
 					Network[node].addPassenger(p);
+					countP++;
 				}
 			}
 
@@ -172,16 +172,16 @@ public class Algorithm {
 				if (taxis[i].atDest() != -2) {
 					while (taxis[i].atDest() != -2) {
 						if (taxis[i].atDest() == -1) {// drop off
-							taxis[i].drop(i);
+							taxis[i].drop();
 							line = line + "d " + (i + 1) + " "
 									+ taxis[i].getNode() + " ";
+							totalD++;
 						} else {// pick up
 							Passenger p = Network[taxis[i].getNode()].remove(i,
 									taxis[i].atDest());
-							taxis[i].pickUp(p, i);
+							taxis[i].pickUp(p);
 							line = line + "p " + (i + 1) + " "
 									+ p.getDestination() + " ";
-							countP++;
 						}
 					}
 				} else {// not at a destination
@@ -192,21 +192,20 @@ public class Algorithm {
 			scanner.println(line + "c");// end minute
 			line = "";
 		}
-		System.out
-				.println(((double) (System.nanoTime() - time) / 1000000000.0));
+		System.out.println(((double) (System.nanoTime() - time) / 1000000000.0));
 		efficiency();
 	}
 
-	private void efficiency() {
-		double efficiency = 0;
-		for (int i = 0; i < Times.size(); i++) {
-			efficiency += Math
-					.pow((Times.get(i) / Math
-							.pow((Distances.get(i) + 2), alpha)),
-							2);
-		}
-		System.out.println("The efficiency is : " + (int) efficiency);
-	}
+	 private void efficiency() {
+	 double efficiency = 0;
+	 for (int i = 0; i < Times.size(); i++) {
+	 efficiency += Math
+	 .pow((Times.get(i) / Math
+	 .pow((Distances.get(i) + 2), alpha)),
+	 2);
+	 }
+	 System.out.println("The efficiency is : " + (int) efficiency);
+	 }
 
 	private void incrementTime() {
 		for (int i = 0; i < taxis.length; i++) {
@@ -219,7 +218,7 @@ public class Algorithm {
 
 	private boolean done() {// done when no more lines in input, no more
 		// passengers in nodes or taxies
-		return (!scanner.hasNextLine() && Times.size() == countP);
+		return (!scanner.hasNextLine() && totalD == countP);
 	}
 
 	// check each taxi to find which taxi has the shortest weighted change in
@@ -227,15 +226,30 @@ public class Algorithm {
 	private int addToBestTaxi(Passenger p, int start, int end, int dist) {
 		int bestTaxi = -1;
 		int bestTime = Integer.MAX_VALUE;
-
+//		double sum = 0;
+//		for (int i = 0; i < taxis.length; i++) {
+//			sum += taxis[i].pathsize();
+//		}
+//		sum = sum / taxis.length;
 		for (int i = 0; i < taxis.length; i++) {
-			int temp = taxis[i].testEfChange(start, end, dist);
-			if (temp < bestTime) {// check taxi
-				bestTaxi = i;
-				bestTime = temp;
-			}
+//			if (taxis[i].pathsize() <= sum) {
+				int temp = taxis[i].testEfChange(start, end, dist);
+				if (temp < bestTime) {// check taxi
+					bestTaxi = i;
+					bestTime = temp;
+				}
+//			}
 		}
-		taxis[bestTaxi].addToPath(start, p, bestTaxi + 1);// add pick up point
+//		if (bestTaxi == -1) {
+//			for (int i = 0; i < taxis.length; i++) {
+//				int temp = taxis[i].testEfChange(start, end, dist);
+//				if (temp < bestTime) {// check taxi
+//					bestTaxi = i;
+//					bestTime = temp;
+//				}
+//			}
+//		}
+		taxis[bestTaxi].addToPath(start, p);// add pick up point
 		return bestTaxi;
 	}
 

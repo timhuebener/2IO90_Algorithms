@@ -3,7 +3,7 @@ import java.util.ArrayList;
 //occupants and location
 public class Taxi {
 	private int node, endSpot, startSpot, end;
-	private int capacity, change;
+	private int capacity;
 	private ArrayList<Integer> path;
 	private ArrayList<Passenger> occupants, task;
 
@@ -78,8 +78,8 @@ public class Taxi {
 		this.end = end;
 		startSpot = 0;
 		endSpot = 0;
-		change = Integer.MAX_VALUE;
-		for (int i = 0; i <= path.size(); i+= 1) {
+		int change = Integer.MAX_VALUE;
+		for (int i = 0; i <= path.size(); i++) {
 			if (checkFull(i - 1) < capacity) {
 				for (int j = i; j <= path.size(); j++) {
 					if (checkFull(j - 1) < capacity) {
@@ -108,8 +108,8 @@ public class Taxi {
 			if (task.get(i) != null) {
 				int temp = -1;
 				for (int k = i + 1; k < path.size(); k++) {
-					if (path.get(k) == task.get(i).getDestination()
-							&& task.get(k) == null) {
+					if (task.get(k) == null
+							&& path.get(k) == task.get(i).getDestination()) {
 						temp = k;
 						break;
 					}
@@ -134,53 +134,39 @@ public class Taxi {
 										.get(startSpot))
 								- Algorithm.Network[node].getDist(path
 										.get(startSpot)) + 1;
-					for (int j = i; j < path.size() && j <= endSpot; j++) {
-						if (startSpot == 0 && j == 0) {
-							if (j == startSpot && j == endSpot) {
-								cDist += Algorithm.Network[node].getDist(start)
-										+ Algorithm.Network[start].getDist(end)
-										+ Algorithm.Network[end].getDist(path
-												.get(j))
-										- Algorithm.Network[node].getDist(path
-												.get(j)) + 2;
-								break;
-							} else if (j == startSpot) {
-								cDist += Algorithm.Network[node].getDist(start)
-										+ Algorithm.Network[start].getDist(path
-												.get(j))
-										- Algorithm.Network[node].getDist(path
-												.get(j)) + 1;
-							}
-						} else {
-							if (j == temp && j < startSpot) {
-								break;
-							} else if (j == startSpot && j == endSpot) {
-								cDist += Algorithm.Network[path.get(j - 1)]
-										.getDist(start)
-										+ Algorithm.Network[start].getDist(end)
-										+ Algorithm.Network[end].getDist(path
-												.get(j))
-										- Algorithm.Network[path.get(j - 1)]
-												.getDist(path.get(j)) + 2;
-								break;
-							} else if (j == startSpot) {
-								cDist += Algorithm.Network[path.get(j - 1)]
-										.getDist(start)
-										+ Algorithm.Network[start].getDist(path
-												.get(j))
-										- Algorithm.Network[path.get(j - 1)]
-												.getDist(path.get(j)) + 1;
-							} else if (j == endSpot) {
-								cDist += Algorithm.Network[path.get(j - 1)]
-										.getDist(end)
-										+ Algorithm.Network[end].getDist(path
-												.get(j))
-										- Algorithm.Network[path.get(j - 1)]
-												.getDist(path.get(j)) + 1;
-								break;
-							} else if (j >= temp) {
-								break;
-							}
+					else {
+						nDist++;
+						cDist++;
+					}
+					for (int j = i + 1; j < path.size(); j++) {
+						if (path.get(j) != path.get(j - 1)) {
+							nDist++;
+							cDist++;
+						}
+						if (j == startSpot && j == endSpot) {
+							cDist += Algorithm.Network[path.get(j - 1)]
+									.getDist(start)
+									+ Algorithm.Network[start].getDist(end)
+									+ Algorithm.Network[end].getDist(path
+											.get(j))
+									- Algorithm.Network[path.get(j - 1)]
+											.getDist(path.get(j)) + 2;
+						} else if (j == startSpot) {
+							cDist += Algorithm.Network[path.get(j - 1)]
+									.getDist(start)
+									+ Algorithm.Network[start].getDist(path
+											.get(j))
+									- Algorithm.Network[path.get(j - 1)]
+											.getDist(path.get(j)) + 1;
+						} else if (j == endSpot) {
+							cDist += Algorithm.Network[path.get(j - 1)]
+									.getDist(end)
+									+ Algorithm.Network[end].getDist(path
+											.get(j))
+									- Algorithm.Network[path.get(j - 1)]
+											.getDist(path.get(j)) + 1;
+						} else if (j >= temp) {
+							break;
 						}
 					}
 					nEfficiency += Math.pow(
@@ -198,18 +184,16 @@ public class Taxi {
 																	.get(i)
 																	.getDestination()) + 2,
 													Algorithm.alpha), 2);
-					if(nEfficiency > change)
-						return nEfficiency;
 				}
 			}
 		}
-		nEfficiency += (int) Math.pow(
-				(dist + getPathLength(-1, startSpot - 1) + 2)
-						/ Math.pow(distance + 2, Algorithm.alpha), 2);
+		nEfficiency += (int) Math.pow((dist + getPathLength(-1, startSpot - 1)
+				+ 2 + endSpot)
+				/ Math.pow(distance + 2, Algorithm.alpha), 2);
 		return nEfficiency;
 	}
 
-	public int getPathLength(int start, int end) {
+	private int getPathLength(int start, int end) {
 		if (path.size() == 0)
 			return 0;
 		int length = 0;
@@ -223,23 +207,11 @@ public class Taxi {
 		return length;
 	}
 
-	public void addToPath(int start, Passenger p, int taxi) {
-		if (endSpot < startSpot)
-			System.out.print("path error");
+	public void addToPath(int start, Passenger p) {
 		path.add(endSpot, end);
 		task.add(endSpot, null);
 		path.add(startSpot, start);
 		task.add(startSpot, p);
-		// System.out.print("taxi "+ taxi + ": ");
-		// for(int i = 0; i < path.size();i++){
-		// System.out.print(path.get(i) + ", ");
-		// }
-		// System.out.println();
-		// System.out.print("taxi "+ taxi + ": ");
-		// for(int i = 0; i < task.size();i++){
-		// System.out.print(task.get(i) + ", ");
-		// }
-		// System.out.println();
 
 	}
 
@@ -250,6 +222,8 @@ public class Taxi {
 	public int moveAlong() {
 		if (path.size() > 0)
 			moveTo(Algorithm.Network[node].getNext(path.get(0)));
+		else if (Algorithm.BestNode != node)
+			moveTo(Algorithm.Network[node].getNext(Algorithm.BestNode));
 		return node;
 	}
 
@@ -270,26 +244,16 @@ public class Taxi {
 		return node;
 	}
 
-	public boolean full() {
-		if (occupants.size() == capacity) {
-			return true;
-		}
-		return false;
-	}
-
 	// picks up a new passenger
-	public void pickUp(Passenger p, int i) {
-		if (occupants.size() < capacity) {
-			task.remove(0);
-			path.remove(0);
-			occupants.add(p);
-		} else
-			System.out.println("error: taxi is over capacity :" + (i + 1));
+	public void pickUp(Passenger p) {
+		task.remove(0);
+		path.remove(0);
+		occupants.add(p);
 	}
 
 	// removes the first passenger whose destination has been reached then
 	// returns true
-	public boolean drop(int taxi) {
+	public boolean drop() {
 		for (int i = 0; i < occupants.size(); i++) {
 			if (occupants.get(i).getDestination() == node) {
 				Algorithm.Times.add(occupants.get(i).getTime());
@@ -297,20 +261,9 @@ public class Taxi {
 				occupants.remove(i);
 				task.remove(0);
 				path.remove(0);
-				// System.out.print("taxi "+ (taxi+1) + ": ");
-				// for(int j = 0; j < path.size();j++){
-				// System.out.print(path.get(j) + ", ");
-				// }
-				// System.out.println();
-				// System.out.print("taxi "+ (taxi+1) + ": ");
-				// for(int j = 0; j < task.size();j++){
-				// System.out.print(task.get(j) + ", ");
-				// }
-				// System.out.println();
 				return true;
 			}
 		}
-		System.out.println("error, passenger not found" + (taxi + 1));
 		return false;
 	}
 

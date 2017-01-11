@@ -35,11 +35,6 @@ public class Node {
     public int[] getNeighbors(){
         return neighbors;
     }
-    public int randomNeighbor(){
-        int temp = (int)(Math.random()*neighbors.length);
-        //System.out.print(neighbors.length);
-        return neighbors[temp];
-    }
     
     //removes the passenger who has waited the longest and returns them
     public Passenger remove(int taxi, int dest){

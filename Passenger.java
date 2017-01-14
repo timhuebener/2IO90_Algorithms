@@ -23,6 +23,9 @@ public class Passenger {
     
     public void incrementTime(){
         time++;
+        //if(time > Algorithm.MaxTime){
+        //System.out.println("halp, passenger got lost. Taxi# : " + taxi + " destination: " + destination + " Initial distance : " + distance);
+        //}
     }
     
     public int getTime(){
